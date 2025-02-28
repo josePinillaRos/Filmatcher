@@ -8,4 +8,8 @@ class RemoteDataSource {
     suspend fun getMoviesByProvider(providerId: Int,page: Int): MoviesByProviders {
         return api.getMoviesByProvider(watchProvider = providerId, page = page)
     }
+
+    suspend fun getTotalPages(providerId: Int): MoviesByProviders {
+        return api.getTotalPages(watchProvider = providerId)
+    }
 }

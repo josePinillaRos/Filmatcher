@@ -44,5 +44,16 @@ interface MoviesAPIInterface {
         @Query("with_watch_providers") watchProvider: Int,
         @Query("watch_region") watchRegion: String = "ES"
     ): MoviesByProviders
+
+    @Headers("Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1MGJhNzg3NTA2MDEwNjllYTdiZmYyNjMwN2E3YWRjMSIsIm5iZiI6MTcyOTQ2Mzc5NS43MjEsInN1YiI6IjY3MTU4NWYzYmQ5MWM4MzgyOWQ3MjQzZiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ._ry5CpEzB01kk9Um_T4-6PT9iLbKCjJwlcwzBfaUx_k")
+    @GET("discover/movie")
+    suspend fun getTotalPages(
+        @Query("language") language: String = "es-ES",
+        @Query("page") page: Int = 1,
+        @Query("region") region: String = "ES",
+        @Query("sort_by") sortBy: String = "popularity.desc",
+        @Query("with_watch_providers") watchProvider: Int,
+        @Query("watch_region") watchRegion: String = "ES"
+    ) : MoviesByProviders
 }
 

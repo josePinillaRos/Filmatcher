@@ -2,7 +2,6 @@ package com.josepinilla.proyectofinal.filmatcher
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
-import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.view.MotionEvent
@@ -11,11 +10,10 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import androidx.room.Room
 import com.bumptech.glide.Glide
 import com.google.firebase.firestore.FirebaseFirestore
-import com.josepinilla.proyectofinal.filmatcher.data.MoviesAPI
-import com.josepinilla.proyectofinal.filmatcher.data.RemoteDataSource
-import com.josepinilla.proyectofinal.filmatcher.data.Repository
+import com.josepinilla.proyectofinal.filmatcher.data.*
 import com.josepinilla.proyectofinal.filmatcher.databinding.ActivityPlayMatchBinding
 import com.josepinilla.proyectofinal.filmatcher.models.Result
 import kotlinx.coroutines.launch
@@ -31,8 +29,11 @@ class PlayMatchActivity : AppCompatActivity() {
     // Firestore
     private val db = FirebaseFirestore.getInstance()
 
-    private val repository by lazy { Repository(RemoteDataSource()) }
+    // Base de datos local (Room)
+    private lateinit var watchedMoviesDB: WatchedMoviesRoomDB
 
+    // Repositorio con acceso a API remota y base de datos local
+    private lateinit var repository: Repository
 
     // Obtener username de SharedPreferences
     private val sharedPrefs by lazy {
@@ -68,9 +69,26 @@ class PlayMatchActivity : AppCompatActivity() {
         binding = ActivityPlayMatchBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
+        // ⚠️ Mover la inicialización aquí dentro de onCreate()
+        watchedMoviesDB = (application as WatchedMoviesApplication).db
+        repository = Repository(RemoteDataSource(), watchedMoviesDB)
 
         providerId = intent.getIntExtra("EXTRA_PROVIDER_ID", 1899)
+
+        lifecycleScope.launch {
+            try {
+                totalPages = repository.getTotalPages(providerId).totalPages ?: 1
+                Toast.makeText(this@PlayMatchActivity, "Total de páginas: $totalPages", Toast.LENGTH_SHORT).show()
+            }
+            catch (e: Exception) {
+                Toast.makeText(
+                    this@PlayMatchActivity,
+                    "Error al obtener el total de páginas: ${e.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+
 
         fetchPage(1)
 
@@ -79,46 +97,64 @@ class PlayMatchActivity : AppCompatActivity() {
     }
 
     private fun fetchPage(pageToLoad: Int, showNextImmediately: Boolean = false) {
+        // Evitamos que se hagan múltiples llamadas simultáneas
         if (isLoading) return
         isLoading = true
 
-        val api = MoviesAPI.getRetrofit2Api()
         lifecycleScope.launch {
             try {
-                val response = api.getMoviesByProvider(
-                    watchProvider = providerId,
+                val newMovies = repository.fetchMovies(providerId, pageToLoad)
+
+                // Si newMovies está vacío, significa que esa página no tiene películas nuevas que mostrar
+                if (newMovies.isEmpty()) {
+                    // Si aún no hemos superado el total de páginas, intentamos la siguiente
+                    if (pageToLoad < totalPages) {
+                        isLoading = false  // liberamos el flag para que la siguiente llamada pueda ocurrir
+                        fetchPage(pageToLoad + 1, showNextImmediately)
+                    } else {
+                        // Hemos agotado todas las páginas disponibles
+                        isLoading = false
+                        Toast.makeText(
+                            this@PlayMatchActivity,
+                            "No hay más películas disponibles",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                } else {
+                    // Aquí tenemos películas nuevas que no están en la BBDD local
+                    val oldSize = moviesList.size
+                    moviesList.addAll(newMovies)
+
+                    // Ajustar totalPages si tu API lo proporciona. Por ahora,
+                    // mantenemos tu lógica de establecer totalPages = pageToLoad.
+                    // Idealmente, deberías ponerlo a la cantidad de páginas totales de la respuesta del servidor.
+                    //totalPages = pageToLoad
                     page = pageToLoad
-                )
-                totalPages = response.totalPages ?: totalPages
 
-                val newMovies = response.results?.filterNotNull() ?: emptyList()
+                    // Si es la primera vez que llenamos moviesList, o si pedimos mostrar de inmediato
+                    if (oldSize == 0) {
+                        currentMovieIndex = 0
+                        showMovie(moviesList[currentMovieIndex])
+                    } else if (showNextImmediately) {
+                        currentMovieIndex = oldSize
+                        showMovie(moviesList[currentMovieIndex])
+                    }
 
-                val oldSize = moviesList.size
-                moviesList.addAll(newMovies)
-
-                page = pageToLoad
-
-                if (pageToLoad == 1 && oldSize == 0 && moviesList.isNotEmpty()) {
-                    currentMovieIndex = 0
-                    showMovie(moviesList[currentMovieIndex])
-                }
-
-                if (showNextImmediately && newMovies.isNotEmpty()) {
-                    currentMovieIndex = oldSize
-                    showMovie(moviesList[currentMovieIndex])
+                    // Liberamos el flag de carga
+                    isLoading = false
                 }
 
             } catch (e: Exception) {
+                isLoading = false
                 Toast.makeText(
                     this@PlayMatchActivity,
                     "Error al obtener películas: ${e.message}",
                     Toast.LENGTH_SHORT
                 ).show()
-            } finally {
-                isLoading = false
             }
         }
     }
+
 
     private fun showMovie(movie: Result) {
         val card = binding.includeItemFilm.root
@@ -139,9 +175,12 @@ class PlayMatchActivity : AppCompatActivity() {
             .into(binding.includeItemFilm.ivProvider)
     }
 
-    /**
-     * Mapea IDs de géneros a texto
-     */
+    private fun saveWatchedMovie(movie: Result) {
+        lifecycleScope.launch {
+            repository.insertWatchedMovie(movie)
+        }
+    }
+
     private fun getGenres(genreIds: List<Int?>?): String {
         val genreMap = mapOf(
             28 to "Acción",
@@ -151,39 +190,50 @@ class PlayMatchActivity : AppCompatActivity() {
             80 to "Crimen",
             99 to "Documental",
             18 to "Drama",
-            10751 to "Familiar",
+            10751 to "Familia",
             14 to "Fantasía",
             36 to "Historia",
             27 to "Terror",
             10402 to "Música",
             9648 to "Misterio",
             10749 to "Romance",
-            878 to "Ciencia Ficción",
+            878 to "Ciencia ficción",
             10770 to "Película de TV",
-            53 to "Suspenso",
+            53 to "Suspense",
             10752 to "Bélica",
-            37 to "Western"
+            37 to "Oeste"
         )
-        return genreIds?.mapNotNull { genreMap[it] }?.joinToString(", ") ?: "Desconocido"
+
+        return genreIds?.mapNotNull { genreMap[it ?: 0] }?.joinToString(", ") ?: "Desconocido"
     }
+
     private fun setupButtons() {
         binding.btnAccept.setOnClickListener {
             val movie = moviesList.getOrNull(currentMovieIndex)
             if (movie != null) {
                 saveAcceptedMovie(movie)
+                movie.providerId = providerId
+                saveWatchedMovie(movie) // Guardar en base de datos local
             }
             nextMovie()
         }
         binding.btnReject.setOnClickListener {
+            val movie = moviesList.getOrNull(currentMovieIndex)
+            if (movie != null) {
+                movie.providerId = providerId
+                saveWatchedMovie(movie) // Guardar en base de datos local si es rechazada
+            }
             nextMovie()
         }
     }
 
     private fun nextMovie() {
         currentMovieIndex++
+
         if (currentMovieIndex < moviesList.size) {
             showMovie(moviesList[currentMovieIndex])
         } else {
+            // Si llegamos al final de la lista, verificamos si aún hay páginas disponibles
             if (page < totalPages) {
                 fetchPage(page + 1, showNextImmediately = true)
             } else {
@@ -191,6 +241,7 @@ class PlayMatchActivity : AppCompatActivity() {
             }
         }
     }
+
 
     private fun setupSwipeCard() {
         val card = binding.includeItemFilm.root
@@ -237,22 +288,18 @@ class PlayMatchActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * Muestra un dialog con la sinopsis (overview) de la película actual.
-     */
     private fun showMovieInfoDialog() {
-        // Verifica que tengamos una película válida
-        if (moviesList.isEmpty() || currentMovieIndex >= moviesList.size) return
+        val movie = moviesList.getOrNull(currentMovieIndex) ?: return
 
-        val movie = moviesList[currentMovieIndex]
         val overviewText = movie.overview ?: "Sin sinopsis disponible"
 
         AlertDialog.Builder(this)
             .setTitle(movie.title ?: "Película")
-            .setMessage(overviewText)
+            .setMessage("Sinopsis: $overviewText")
             .setPositiveButton("Cerrar", null)
             .show()
     }
+
     private fun animateCardOut(direction: Int) {
         val card = binding.includeItemFilm.root
         val exitX = direction * 2000f
@@ -265,9 +312,14 @@ class PlayMatchActivity : AppCompatActivity() {
                     card.translationX = 0f
                     card.translationY = 0f
 
-                    if (direction == 1 && currentMovieIndex < moviesList.size) {
-                        val movie = moviesList[currentMovieIndex]
-                        saveAcceptedMovie(movie)
+                    val movie = moviesList.getOrNull(currentMovieIndex)
+                    if (movie != null) {
+                        movie.providerId = providerId
+                        saveWatchedMovie(movie) // Guardar en la base de datos local si se mueve la tarjeta
+
+                        if (direction == 1) { // Si se desliza a la derecha (aceptada)
+                            saveAcceptedMovie(movie)
+                        }
                     }
 
                     nextMovie()
@@ -287,13 +339,6 @@ class PlayMatchActivity : AppCompatActivity() {
         }
     }
 
-
-
-    private fun getCurrentTimestamp(): String {
-        val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
-        return sdf.format(Date())
-    }
-
     private val providerLogos = mapOf(
         8 to R.drawable.netflix,
         2241 to R.drawable.movistar,
@@ -301,5 +346,4 @@ class PlayMatchActivity : AppCompatActivity() {
         1899 to R.drawable.max,
         119 to R.drawable.amazon
     )
-
 }

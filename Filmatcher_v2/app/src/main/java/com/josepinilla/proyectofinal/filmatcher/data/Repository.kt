@@ -9,19 +9,31 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 
 class Repository(
-    private val remoteDataSource: RemoteDataSource
+    val remoteDataSource: RemoteDataSource,
+    db: WatchedMoviesRoomDB
 ) {
     private val db = FirebaseFirestore.getInstance()
+
+    private val localDataSource = LocalDataSource(db.watchedMoviesDao())
+
 
     /**
      * fetchMovies
      * Llama a la API TMDb para obtener las películas de un proveedor y página
      */
     suspend fun fetchMovies(watchProvider: Int, page: Int): List<Result> {
-        val response: MoviesByProviders =
-            remoteDataSource.getMoviesByProvider(watchProvider, page)
-        return response.results?.filterNotNull() ?: emptyList()
+        val response: MoviesByProviders = remoteDataSource.getMoviesByProvider(watchProvider, page)
+        val allMovies = response.results?.filterNotNull() ?: emptyList()
+
+        // Filtrar las películas que ya han sido vistas en la base de datos local
+        val filteredMovies = allMovies.filter { movie ->
+            val isWatched = localDataSource.getWatchedMoviesById(movie.id, watchProvider).isNotEmpty()
+            !isWatched // Solo mantenemos las películas que NO están en la BD local
+        }
+
+        return filteredMovies
     }
+
 
     /**
      * saveAcceptedMovie
@@ -93,6 +105,14 @@ class Repository(
                 trySend(list)
             }
         awaitClose { listener.remove() }
+    }
+
+    suspend fun insertWatchedMovie(movie: Result) {
+        localDataSource.insertWatchedMovie(movie)
+    }
+
+    suspend fun getTotalPages(providerID: Int): MoviesByProviders {
+        return remoteDataSource.getTotalPages(providerID)
     }
 }
 
