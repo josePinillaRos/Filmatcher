@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="CustomPopupMenu" parent="Widget.AppCompat.Light.PopupMenu.Overflow">
+        <item name="android:popupBackground">@color/md_theme_onPrimary</item> <!-- Fondo blanco -->
+        <item name="android:textColorPrimary">@color/md_theme_onSurface_highContrast</item> <!-- Texto negro -->
+    </style>
+</resources>

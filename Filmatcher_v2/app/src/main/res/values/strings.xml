@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Filmatcher</string>
+    <string name="txt_netflix">Netflix</string>
+    <string name="txt_disney">Disney+</string>
+    <string name="txt_max">MAX</string>
+    <string name="txt_movistar">Movistar+</string>
+    <string name="txt_amazon">Amazon Prime</string>
+    <string name="txt_reject">Reject</string>
+    <string name="txt_accept">Accept</string>
+</resources>

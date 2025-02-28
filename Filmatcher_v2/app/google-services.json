@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "335492865503",
+    "project_id": "filmatcher",
+    "storage_bucket": "filmatcher.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:335492865503:android:e823f3194afa610735386a",
+        "android_client_info": {
+          "package_name": "com.josepinilla.proyectofinal.filmatcher"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyADRwF1abA3gNzW4EadT4LgOmsTpAfyUz4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

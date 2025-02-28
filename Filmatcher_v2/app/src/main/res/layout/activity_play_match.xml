@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/cine"
+    android:fitsSystemWindows="true"
+    android:paddingTop="50dp"
+    tools:context=".PlayMatchActivity">
+
+    <!-- AppBar con Toolbar -->
+
+    <!-- Contenedor principal con márgenes laterales -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:fitsSystemWindows="true"
+        android:padding="16dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <!-- Contenedor de la película -->
+        <include
+            android:id="@+id/include_item_film"
+            layout="@layout/item_film"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintBottom_toTopOf="@id/button_container"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <!-- Contenedor de los botones con margen inferior para evitar la barra de navegación -->
+        <LinearLayout
+            android:id="@+id/button_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:background="@color/md_theme_primary_semi2"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingBottom="32dp"
+            app:layout_constraintBottom_toBottomOf="@id/include_item_film"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <!-- Botón para rechazar -->
+            <ImageButton
+                android:id="@+id/btnReject"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_marginEnd="24dp"
+                android:background="@null"
+                android:contentDescription="@string/txt_reject"
+                android:src="@android:drawable/ic_delete"
+                app:tint="@android:color/holo_red_light" />
+
+            <!-- Botón para aceptar -->
+            <ImageButton
+                android:id="@+id/btnAccept"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_marginStart="24dp"
+                android:background="@null"
+                android:contentDescription="@string/txt_accept"
+                android:src="@android:drawable/btn_star_big_off"
+                app:tint="@android:color/holo_green_light" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
