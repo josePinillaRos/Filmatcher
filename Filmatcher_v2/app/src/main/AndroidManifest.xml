@@ -15,7 +15,7 @@
         android:theme="@style/AppTheme"
         tools:targetApi="31">
         <activity
-            android:name=".LoginActivity"
+            android:name=".ui.login.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,19 +24,19 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".PlayMatchActivity"
+            android:name=".ui.playmatch.PlayMatchActivity"
             android:exported="true"
             />
         <activity
-            android:name=".RegisterActivity"
+            android:name=".ui.register.RegisterActivity"
             android:exported="true"
             />
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.main.MainActivity"
             android:exported="true"
             />
         <activity
-            android:name=".MatchesActivity"
+            android:name=".ui.matches.MatchesActivity"
             android:exported="true"
             />
     </application>

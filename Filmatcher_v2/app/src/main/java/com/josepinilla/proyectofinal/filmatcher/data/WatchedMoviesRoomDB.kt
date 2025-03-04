@@ -8,6 +8,10 @@ import androidx.room.Query
 import androidx.room.RoomDatabase
 import com.josepinilla.proyectofinal.filmatcher.models.Result
 
+/**
+ * WatchedMoviesRoomDB
+ * Clase que representa la base de datos de Room
+ */
 @Database(entities = [Result::class], version = 1)
 abstract class WatchedMoviesRoomDB: RoomDatabase() {
     abstract fun watchedMoviesDao(): WatchedMoviesDao
@@ -15,11 +19,17 @@ abstract class WatchedMoviesRoomDB: RoomDatabase() {
 
 @Dao
 interface WatchedMoviesDao {
+    /**
+     * insertWatchedMovie
+     * Inserta una película vista en la base de datos local
+     */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertWatchedMovie(movie: Result)
 
-
-
+    /**
+     * getWatchedMoviesById
+     * Obtiene las películas vistas por un usuario por id y providerId
+     */
     @Query("SELECT * FROM watched_movies WHERE id = :id AND providerId = :providerId")
     suspend fun getWatchedMoviesById(id: Int, providerId: Int): List<Result>
 }

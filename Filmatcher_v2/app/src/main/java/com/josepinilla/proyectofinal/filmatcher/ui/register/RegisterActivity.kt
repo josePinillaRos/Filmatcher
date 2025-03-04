@@ -1,14 +1,18 @@
-package com.josepinilla.proyectofinal.filmatcher
+package com.josepinilla.proyectofinal.filmatcher.ui.register
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Patterns
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.firestore.FirebaseFirestore
 import com.josepinilla.proyectofinal.filmatcher.databinding.ActivityRegisterBinding
+import com.josepinilla.proyectofinal.filmatcher.ui.login.LoginActivity
 import java.security.MessageDigest
 
+/**
+ * RegisterActivity
+ * Clase que representa la actividad de registro de usuario
+ */
 class RegisterActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityRegisterBinding
@@ -48,7 +52,7 @@ class RegisterActivity : AppCompatActivity() {
             return
         }
 
-        // Verificar si el nombre de usuario ya existe
+        // Verificar si el nombre de usuario ya existe en firestore
         db.collection("users")
             .whereEqualTo("username", username)
             .get()
@@ -65,6 +69,9 @@ class RegisterActivity : AppCompatActivity() {
             }
     }
 
+    /**
+     * Guarda el usuario en Firestore con la contraseña cifrada
+     */
     private fun saveUserToFirestore(username: String, password: String) {
         val hashedPassword = hashPassword(password)
         val user = hashMapOf(
@@ -84,6 +91,9 @@ class RegisterActivity : AppCompatActivity() {
             }
     }
 
+    /**
+     * Cifra la contraseña con SHA-256
+     */
     private fun hashPassword(password: String): String {
         val bytes = MessageDigest.getInstance("SHA-256").digest(password.toByteArray())
         return bytes.joinToString("") { "%02x".format(it) }

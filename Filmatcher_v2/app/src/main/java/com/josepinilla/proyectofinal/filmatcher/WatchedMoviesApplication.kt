@@ -4,6 +4,10 @@ import android.app.Application
 import androidx.room.Room
 import com.josepinilla.proyectofinal.filmatcher.data.WatchedMoviesRoomDB
 
+/**
+ * WatchedMoviesApplication
+ * Clase que representa la aplicación de la base de datos de Room
+ */
 class WatchedMoviesApplication : Application() {
     lateinit var db: WatchedMoviesRoomDB
         private set

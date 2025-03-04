@@ -1,4 +1,4 @@
-package com.josepinilla.proyectofinal.filmatcher
+package com.josepinilla.proyectofinal.filmatcher.ui.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
+//TODO no se si se usa aun
 class MainViewModel(private val repository: Repository) : ViewModel() {
 
     // Estado para almacenar la lista de películas (Result) que llegan de la API

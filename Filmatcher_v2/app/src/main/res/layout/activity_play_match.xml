@@ -9,7 +9,7 @@
     android:background="@drawable/cine"
     android:fitsSystemWindows="true"
     android:paddingTop="50dp"
-    tools:context=".PlayMatchActivity">
+    tools:context=".ui.playmatch.PlayMatchActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

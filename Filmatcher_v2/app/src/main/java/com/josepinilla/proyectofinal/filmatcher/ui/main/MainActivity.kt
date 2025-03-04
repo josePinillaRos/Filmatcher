@@ -1,32 +1,31 @@
-package com.josepinilla.proyectofinal.filmatcher
+package com.josepinilla.proyectofinal.filmatcher.ui.main
 
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Button
-import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.josepinilla.proyectofinal.filmatcher.databinding.ActivityMainBinding
-import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
+import com.josepinilla.proyectofinal.filmatcher.R
+import com.josepinilla.proyectofinal.filmatcher.ui.login.LoginActivity
+import com.josepinilla.proyectofinal.filmatcher.ui.matches.MatchesActivity
+import com.josepinilla.proyectofinal.filmatcher.ui.playmatch.PlayMatchActivity
 
+/**
+ * MainActivity
+ * Clase que representa la actividad principal
+ * Permite al usuario seleccionar un proveedor de streaming y buscar coincidencias con otro usuario
+ */
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
-    // Firestore si vas a buscar coincidencias directamente
-    private val db = FirebaseFirestore.getInstance()
-
-    // Nombre de usuario actual (almacenado en SharedPreferences)
+    // Nombre de usuario actual almacenado en SharedPreferences
     private val currentUsername by lazy {
         val sharedPreferences = getSharedPreferences("UserSession", MODE_PRIVATE)
         sharedPreferences.getString("username", null) ?: "guest_user"
@@ -55,16 +54,14 @@ class MainActivity : AppCompatActivity() {
             binding.btnAmazon to 119
         )
 
-        // Configurar clics en los botones
+        // Configurar clics en los botones para ir a PlayMatchActivity en funcion del proveedor
         providerMap.forEach { (button, providerId) ->
             button.setOnClickListener {
                 goToPlayMatch(providerId)
             }
         }
 
-
-
-        // Nuevo: buscar coincidencias con otro usuario
+        // buscar coincidencias con otro usuario
         binding.btnSearchMatches.setOnClickListener {
             val otherUsername = binding.etSearchOtherUser.text.toString().trim()
             if (otherUsername.isEmpty()) {
@@ -75,6 +72,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * goToPlayMatch
+     * Navega a PlayMatchActivity con el ID del proveedor seleccionado
+     * @param providerId ID del proveedor
+     */
     private fun goToPlayMatch(providerId: Int) {
         val intent = Intent(this, PlayMatchActivity::class.java)
         intent.putExtra("EXTRA_PROVIDER_ID", providerId)
@@ -96,7 +98,6 @@ class MainActivity : AppCompatActivity() {
             else -> super.onOptionsItemSelected(item)
         }
     }
-
 
     private fun logoutUser() {
         Log.d("MainActivity", "Ejecutando logoutUser()")
