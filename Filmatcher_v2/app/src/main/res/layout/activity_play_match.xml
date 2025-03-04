@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
 
@@ -10,30 +11,60 @@
     android:paddingTop="50dp"
     tools:context=".PlayMatchActivity">
 
-    <!-- AppBar con Toolbar -->
-
-    <!-- Contenedor principal con márgenes laterales -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:fitsSystemWindows="true"
         android:padding="16dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
+        <!-- Contenedor para el TextView y el Spinner en la misma línea -->
+        <LinearLayout
+            android:id="@+id/filter_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingBottom="8dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <!-- Label para el filtro -->
+            <TextView
+                android:id="@+id/tvFilter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:text="Filtrar:"
+                android:textColor="@android:color/white"
+                android:textSize="16sp" />
+
+            <!-- Spinner para seleccionar género -->
+            <Spinner
+                android:id="@+id/spinnerFilter"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@android:drawable/btn_dropdown" />
+        </LinearLayout>
+
         <!-- Contenedor de la película -->
         <include
             android:id="@+id/include_item_film"
             layout="@layout/item_film"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
+            app:layout_constraintTop_toBottomOf="@id/filter_container"
             app:layout_constraintBottom_toTopOf="@id/button_container"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
-        <!-- Contenedor de los botones con margen inferior para evitar la barra de navegación -->
+        <!-- Contenedor de los botones en la parte inferior -->
         <LinearLayout
             android:id="@+id/button_container"
             android:layout_width="match_parent"
@@ -43,7 +74,7 @@
             android:gravity="center"
             android:orientation="horizontal"
             android:paddingBottom="32dp"
-            app:layout_constraintBottom_toBottomOf="@id/include_item_film"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 

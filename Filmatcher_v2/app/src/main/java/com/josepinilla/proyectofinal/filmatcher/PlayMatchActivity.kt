@@ -47,6 +47,9 @@ class PlayMatchActivity : AppCompatActivity() {
     private var moviesList = mutableListOf<Result>()
     private var currentMovieIndex = 0
 
+    //Generos
+    private var selectedGenre: Int = 0
+
     // Paginación
     private var page = 1
     private var totalPages = 1
@@ -92,27 +95,25 @@ class PlayMatchActivity : AppCompatActivity() {
 
         fetchPage(1)
 
+        setupGenreFilterSpinner()
         setupButtons()
         setupSwipeCard()
     }
 
     private fun fetchPage(pageToLoad: Int, showNextImmediately: Boolean = false) {
-        // Evitamos que se hagan múltiples llamadas simultáneas
         if (isLoading) return
         isLoading = true
 
         lifecycleScope.launch {
             try {
-                val newMovies = repository.fetchMovies(providerId, pageToLoad)
+                // Ahora le pasamos selectedGenre
+                val newMovies = repository.fetchMovies(providerId, pageToLoad, selectedGenre)
 
-                // Si newMovies está vacío, significa que esa página no tiene películas nuevas que mostrar
                 if (newMovies.isEmpty()) {
-                    // Si aún no hemos superado el total de páginas, intentamos la siguiente
                     if (pageToLoad < totalPages) {
-                        isLoading = false  // liberamos el flag para que la siguiente llamada pueda ocurrir
+                        isLoading = false
                         fetchPage(pageToLoad + 1, showNextImmediately)
                     } else {
-                        // Hemos agotado todas las páginas disponibles
                         isLoading = false
                         Toast.makeText(
                             this@PlayMatchActivity,
@@ -121,17 +122,10 @@ class PlayMatchActivity : AppCompatActivity() {
                         ).show()
                     }
                 } else {
-                    // Aquí tenemos películas nuevas que no están en la BBDD local
                     val oldSize = moviesList.size
                     moviesList.addAll(newMovies)
-
-                    // Ajustar totalPages si tu API lo proporciona. Por ahora,
-                    // mantenemos tu lógica de establecer totalPages = pageToLoad.
-                    // Idealmente, deberías ponerlo a la cantidad de páginas totales de la respuesta del servidor.
-                    //totalPages = pageToLoad
                     page = pageToLoad
 
-                    // Si es la primera vez que llenamos moviesList, o si pedimos mostrar de inmediato
                     if (oldSize == 0) {
                         currentMovieIndex = 0
                         showMovie(moviesList[currentMovieIndex])
@@ -140,10 +134,8 @@ class PlayMatchActivity : AppCompatActivity() {
                         showMovie(moviesList[currentMovieIndex])
                     }
 
-                    // Liberamos el flag de carga
                     isLoading = false
                 }
-
             } catch (e: Exception) {
                 isLoading = false
                 Toast.makeText(
@@ -154,6 +146,7 @@ class PlayMatchActivity : AppCompatActivity() {
             }
         }
     }
+
 
 
     private fun showMovie(movie: Result) {
@@ -346,4 +339,65 @@ class PlayMatchActivity : AppCompatActivity() {
         1899 to R.drawable.max,
         119 to R.drawable.amazon
     )
+
+    private fun setupGenreFilterSpinner() {
+        // Lista de géneros (ID TMDb -> Nombre)
+        val genreMap = mapOf(
+            0 to "Todos",
+            28 to "Acción",
+            12 to "Aventura",
+            16 to "Animación",
+            35 to "Comedia",
+            80 to "Crimen",
+            99 to "Documental",
+            18 to "Drama",
+            10751 to "Familia",
+            14 to "Fantasía",
+            36 to "Historia",
+            27 to "Terror",
+            10402 to "Música",
+            9648 to "Misterio",
+            10749 to "Romance",
+            878 to "Ciencia ficción",
+            10770 to "Película de TV",
+            53 to "Suspense",
+            10752 to "Bélica",
+            37 to "Oeste"
+        )
+
+        // Crear lista de nombres para mostrar en el Spinner
+        // y también una lista paralela de keys
+        val genreNames = genreMap.values.toList()
+        val genreIds = genreMap.keys.toList()
+
+        // Creamos un ArrayAdapter
+        val adapter = android.widget.ArrayAdapter(
+            this,
+            android.R.layout.simple_spinner_item,
+            genreNames
+        )
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+
+        binding.spinnerFilter.adapter = adapter
+
+        // Listener de selección
+        binding.spinnerFilter.onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: android.widget.AdapterView<*>?, view: View?, position: Int, id: Long) {
+                // Obtenemos la clave real (genreId)
+                selectedGenre = genreIds[position]
+
+                // Reiniciamos el paginado y la lista
+                page = 1
+                moviesList.clear()
+                currentMovieIndex = 0
+
+                // Llamamos a fetchPage(1) con el nuevo género
+                fetchPage(1)
+            }
+
+            override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {
+                // No hacer nada si no se selecciona
+            }
+        }
+    }
 }

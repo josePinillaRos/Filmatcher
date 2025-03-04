@@ -21,18 +21,24 @@ class Repository(
      * fetchMovies
      * Llama a la API TMDb para obtener las películas de un proveedor y página
      */
-    suspend fun fetchMovies(watchProvider: Int, page: Int): List<Result> {
+    suspend fun fetchMovies(watchProvider: Int, page: Int, genreFilter: Int = 0): List<Result> {
         val response: MoviesByProviders = remoteDataSource.getMoviesByProvider(watchProvider, page)
         val allMovies = response.results?.filterNotNull() ?: emptyList()
 
-        // Filtrar las películas que ya han sido vistas en la base de datos local
         val filteredMovies = allMovies.filter { movie ->
             val isWatched = localDataSource.getWatchedMoviesById(movie.id, watchProvider).isNotEmpty()
-            !isWatched // Solo mantenemos las películas que NO están en la BD local
+
+            // Verificamos si la película contiene el género seleccionado,
+            // a menos que genreFilter sea 0 (que significa "Todos")
+            val belongsToGenre = (genreFilter == 0) || (movie.genreIds?.contains(genreFilter) == true)
+
+            // Aceptamos la película solo si NO está vista y si cumple el filtro de género
+            (!isWatched) && belongsToGenre
         }
 
         return filteredMovies
     }
+
 
 
     /**
