@@ -23,6 +23,10 @@ android {
             arg("room.schemaLocation", "$projectDir/schemas")
             arg("room.incremental", "true")
         }
+
+        providers.gradleProperty("API_KEY_TMDB").get().let {
+            buildConfigField("String", "API_KEY_TMDB", it)
+        }
     }
 
     buildTypes {
@@ -44,6 +48,7 @@ android {
 
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 }
 

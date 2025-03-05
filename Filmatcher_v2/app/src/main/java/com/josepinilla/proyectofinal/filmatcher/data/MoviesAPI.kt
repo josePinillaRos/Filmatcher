@@ -1,5 +1,6 @@
 package com.josepinilla.proyectofinal.filmatcher.data
 
+import com.josepinilla.proyectofinal.filmatcher.BuildConfig
 import com.josepinilla.proyectofinal.filmatcher.models.MoviesByProviders
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -35,7 +36,7 @@ class MoviesAPI {
  */
 interface MoviesAPIInterface {
     // TODO obtener el token de autenticación de manera segura
-    @Headers("Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1MGJhNzg3NTA2MDEwNjllYTdiZmYyNjMwN2E3YWRjMSIsIm5iZiI6MTcyOTQ2Mzc5NS43MjEsInN1YiI6IjY3MTU4NWYzYmQ5MWM4MzgyOWQ3MjQzZiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ._ry5CpEzB01kk9Um_T4-6PT9iLbKCjJwlcwzBfaUx_k")
+    @Headers("Authorization: Bearer ${BuildConfig.API_KEY_TMDB}")
     @GET("discover/movie")
     suspend fun getMoviesByProvider(
         @Query("language") language: String = "es-ES",
@@ -46,7 +47,7 @@ interface MoviesAPIInterface {
         @Query("watch_region") watchRegion: String = "ES"
     ): MoviesByProviders
 
-    @Headers("Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1MGJhNzg3NTA2MDEwNjllYTdiZmYyNjMwN2E3YWRjMSIsIm5iZiI6MTcyOTQ2Mzc5NS43MjEsInN1YiI6IjY3MTU4NWYzYmQ5MWM4MzgyOWQ3MjQzZiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ._ry5CpEzB01kk9Um_T4-6PT9iLbKCjJwlcwzBfaUx_k")
+    @Headers("Authorization: Bearer ${BuildConfig.API_KEY_TMDB}")
     @GET("discover/movie")
     suspend fun getTotalPages(
         @Query("language") language: String = "es-ES",
