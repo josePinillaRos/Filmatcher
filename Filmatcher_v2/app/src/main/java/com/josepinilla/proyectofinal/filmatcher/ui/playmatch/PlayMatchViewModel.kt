@@ -70,7 +70,7 @@ class PlayMatchViewModel(
         viewModelScope.launch {
             try {
                 // Obtener películas de la página
-                val newMovies = repository.fetchMovies(providerId, pageToLoad, selectedGenre)
+                val newMovies = repository.fetchMovies(providerId, pageToLoad, selectedGenre, username)
 
                 if (newMovies.isEmpty()) {
                     // Si no llegan películas en esta página y quedan más páginas, intentamos la siguiente

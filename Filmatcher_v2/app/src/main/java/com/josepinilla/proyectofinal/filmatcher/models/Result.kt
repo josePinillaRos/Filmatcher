@@ -3,19 +3,19 @@ package com.josepinilla.proyectofinal.filmatcher.models
 import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.Ignore
-import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
 @Entity(
     tableName = "watched_movies",
-    primaryKeys = ["id", "providerId"] // Clave compuesta
+    primaryKeys = ["id", "providerId", "userName"] // Clave compuesta
 )
 data class Result(
     @SerializedName("id")
     val id: Int,
     var providerId: Int,
+    var userName: String = "",
 
     @Ignore
     @SerializedName("adult")

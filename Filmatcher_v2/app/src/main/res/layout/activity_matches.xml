@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/cine"
     android:orientation="vertical"
+    android:fitsSystemWindows="true"
     android:padding="16dp">
 
     <TextView
@@ -12,8 +13,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
+        android:paddingLeft="25dp"
         android:text="Películas en común"
-        android:textSize="20sp" />
+        android:textColor="@color/md_theme_background_highContrast"
+        android:textColorLink="#FFFFFF"
+        android:textSize="20sp"
+        android:textStyle="bold" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvMatches"

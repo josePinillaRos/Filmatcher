@@ -30,6 +30,6 @@ interface WatchedMoviesDao {
      * getWatchedMoviesById
      * Obtiene las películas vistas por un usuario por id y providerId
      */
-    @Query("SELECT * FROM watched_movies WHERE id = :id AND providerId = :providerId")
-    suspend fun getWatchedMoviesById(id: Int, providerId: Int): List<Result>
+    @Query("SELECT * FROM watched_movies WHERE id = :id AND providerId = :providerId AND userName = :userName")
+    suspend fun getWatchedMoviesById(id: Int, providerId: Int, userName: String): List<Result>
 }

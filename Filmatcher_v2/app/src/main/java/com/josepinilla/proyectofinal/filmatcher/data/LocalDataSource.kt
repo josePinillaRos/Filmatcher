@@ -16,7 +16,7 @@ class LocalDataSource(private val watchedMoviesDao: WatchedMoviesDao) {
     }
 
     // Obtiene las películas vistas por un usuario
-    suspend fun getWatchedMoviesById(id: Int, providerId: Int): List<Result> {
-        return watchedMoviesDao.getWatchedMoviesById(id, providerId)
+    suspend fun getWatchedMoviesById(id: Int, providerId: Int, userName: String): List<Result> {
+        return watchedMoviesDao.getWatchedMoviesById(id, providerId, userName)
     }
 }

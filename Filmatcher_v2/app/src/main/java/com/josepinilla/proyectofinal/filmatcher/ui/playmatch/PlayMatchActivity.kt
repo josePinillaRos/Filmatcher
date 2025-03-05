@@ -65,7 +65,6 @@ class PlayMatchActivity : AppCompatActivity() {
         // Inicializo el Repository
         val watchedMoviesDB = (application as WatchedMoviesApplication).db
         val repository = Repository(RemoteDataSource(), watchedMoviesDB)
-        val firestore = RepositoryFirebase()
 
         // Instancio el ViewModel
         val factory = PlayMatchViewModelFactory(repository, username, providerId)
@@ -157,6 +156,7 @@ class PlayMatchActivity : AppCompatActivity() {
         binding.btnAccept.setOnClickListener {
             val current = viewModel.currentMovie.value ?: return@setOnClickListener
             current.providerId = intent.getIntExtra("EXTRA_PROVIDER_ID", 1899)
+            current.userName = username
 
             // Guarda en BD local y Firestore
             viewModel.saveWatchedMovie(current)
@@ -172,6 +172,7 @@ class PlayMatchActivity : AppCompatActivity() {
         binding.btnReject.setOnClickListener {
             val current = viewModel.currentMovie.value ?: return@setOnClickListener
             current.providerId = intent.getIntExtra("EXTRA_PROVIDER_ID", 1899)
+            current.userName = username
 
             // Solo guarda en BD local y avanza
             viewModel.saveWatchedMovie(current)
@@ -330,6 +331,8 @@ class PlayMatchActivity : AppCompatActivity() {
                     if (current != null) {
                         // Marcamos en BD local
                         current.providerId = intent.getIntExtra("EXTRA_PROVIDER_ID", 1899)
+                        current.userName = username
+
                         viewModel.saveWatchedMovie(current)
 
                         // Swipe derecha => aceptada

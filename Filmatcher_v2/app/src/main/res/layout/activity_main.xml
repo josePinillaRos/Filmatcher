@@ -17,11 +17,12 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/md_theme_onSurfaceVariant_highContrast"
+            android:background="@color/md_theme_onSurface_mediumContrast"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:menu="@menu/menu_main"
             app:popupTheme="@style/CustomPopupMenu"
-            app:title="@string/app_name" />
+            app:title="@string/app_name"
+            app:titleTextColor="@color/md_theme_inverseOnSurface_highContrast" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <!-- Contenido principal con ScrollView -->

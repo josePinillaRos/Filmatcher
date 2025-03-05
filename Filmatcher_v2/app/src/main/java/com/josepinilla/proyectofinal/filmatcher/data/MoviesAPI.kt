@@ -35,7 +35,6 @@ class MoviesAPI {
  * @author Jose Pinilla
  */
 interface MoviesAPIInterface {
-    // TODO obtener el token de autenticación de manera segura
     @Headers("Authorization: Bearer ${BuildConfig.API_KEY_TMDB}")
     @GET("discover/movie")
     suspend fun getMoviesByProvider(

@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "75d2552f84c2bea56a2f34c2374905fb",
+    "identityHash": "d1e89f7d7a898bb624f8f304a40061d9",
     "entities": [
       {
         "tableName": "watched_movies",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `providerId` INTEGER NOT NULL, PRIMARY KEY(`id`, `providerId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `providerId` INTEGER NOT NULL, `userName` TEXT NOT NULL, PRIMARY KEY(`id`, `providerId`, `userName`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -19,13 +19,20 @@
             "columnName": "providerId",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "userName",
+            "columnName": "userName",
+            "affinity": "TEXT",
+            "notNull": true
           }
         ],
         "primaryKey": {
           "autoGenerate": false,
           "columnNames": [
             "id",
-            "providerId"
+            "providerId",
+            "userName"
           ]
         },
         "indices": [],
@@ -35,7 +42,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '75d2552f84c2bea56a2f34c2374905fb')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd1e89f7d7a898bb624f8f304a40061d9')"
     ]
   }
 }
