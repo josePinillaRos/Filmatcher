@@ -1,6 +1,7 @@
 package com.josepinilla.proyectofinal.filmatcher.ui.register
 
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -30,6 +31,8 @@ class RegisterActivity : AppCompatActivity() {
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
         }
+
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_NOSENSOR
     }
 
     private fun registerUser() {

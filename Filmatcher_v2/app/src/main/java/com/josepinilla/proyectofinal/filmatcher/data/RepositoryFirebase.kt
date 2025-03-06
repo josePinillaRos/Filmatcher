@@ -32,6 +32,18 @@ class RepositoryFirebase {
             .set(docData)
     }
 
+    /**
+     * deleteMoviesByUser
+     * Elimina las películas de un usuario de una plataforma en Firestore
+     */
+    fun deleteMovie(username: String, movie: Result, providerId: Int) {
+        val movieId = movie.id
+        db.collection("user_movies")
+            .document(username)
+            .collection("movies")
+            .document(movieId.toString())
+            .delete()
+    }
 
     /**
      * fetchCommonMovies

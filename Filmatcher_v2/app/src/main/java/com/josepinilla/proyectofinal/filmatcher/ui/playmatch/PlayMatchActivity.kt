@@ -2,6 +2,7 @@ package com.josepinilla.proyectofinal.filmatcher.ui.playmatch
 
 import android.animation.AnimatorListenerAdapter
 import android.content.Context
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
@@ -70,6 +71,11 @@ class PlayMatchActivity : AppCompatActivity() {
         val factory = PlayMatchViewModelFactory(repository, username, providerId)
         viewModel = ViewModelProvider(this, factory)[PlayMatchViewModel::class.java]
 
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_NOSENSOR
+
+        //Configurar el SwipeRefreshLayout
+        setupSwipeRefreshLayout()
+
         // Configurar el Spinner de géneros
         setupGenreFilterSpinner()
 
@@ -84,6 +90,43 @@ class PlayMatchActivity : AppCompatActivity() {
 
         // Cargar el total de páginas y la primera página
         initData()
+    }
+
+    private fun setupSwipeRefreshLayout() {
+        binding.swipeRefresh.setOnRefreshListener {
+            showResetDialog()
+        }
+    }
+
+    private fun showResetDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("Reiniciar películas")
+            .setMessage("¿Estás seguro de que quieres reiniciar?")
+            .setPositiveButton("Sí") { _, _ ->
+                resetMovies()
+            }
+            .setNegativeButton("No") { dialog, _ ->
+                dialog.dismiss()
+                binding.swipeRefresh.isRefreshing = false
+            }
+            .show()
+    }
+
+    private fun resetMovies() {
+        lifecycleScope.launch {
+            viewModel.resetMoviesByUser()
+            binding.swipeRefresh.isRefreshing = false
+            Toast.makeText(this@PlayMatchActivity, "Películas reiniciadas", Toast.LENGTH_SHORT).show()
+
+            // Cargar la primera página
+            viewModel.fetchPage(
+                pageToLoad = 1,
+                showNextImmediately = true,
+                onError = { message ->
+                    Toast.makeText(this@PlayMatchActivity, message, Toast.LENGTH_SHORT).show()
+                }
+            )
+        }
     }
 
     /**
@@ -174,8 +217,12 @@ class PlayMatchActivity : AppCompatActivity() {
             current.providerId = intent.getIntExtra("EXTRA_PROVIDER_ID", 1899)
             current.userName = username
 
-            // Solo guarda en BD local y avanza
+            // guarda en BD local y elimina de Firestore
             viewModel.saveWatchedMovie(current)
+            viewModel.deleteMovie(
+                current,
+                onError = { msg -> Toast.makeText(this, msg, Toast.LENGTH_SHORT).show() }
+            )
             viewModel.nextMovie {
                 Toast.makeText(this, "No hay más películas disponibles", Toast.LENGTH_SHORT).show()
             }
@@ -256,6 +303,9 @@ class PlayMatchActivity : AppCompatActivity() {
         card.setOnTouchListener { v, event ->
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
+                    // Deshabilita el SwipeRefresh para que no interfiera con el swipe horizontal
+                    binding.swipeRefresh.isEnabled = false
+
                     initialX = card.translationX
                     initialY = card.translationY
                     downX = event.rawX
@@ -268,6 +318,9 @@ class PlayMatchActivity : AppCompatActivity() {
                     card.translationY = initialY + dy
                 }
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                    // Vuelve a habilitar el SwipeRefresh
+                    binding.swipeRefresh.isEnabled = true
+
                     val finalX = card.translationX
                     val distanceX = abs(finalX)
 
@@ -297,6 +350,7 @@ class PlayMatchActivity : AppCompatActivity() {
             true
         }
     }
+
 
     /**
      * Muestra diálogo con la sinopsis.
@@ -341,6 +395,19 @@ class PlayMatchActivity : AppCompatActivity() {
                                 current,
                                 onSuccess = { msg -> Toast.makeText(this@PlayMatchActivity, msg, Toast.LENGTH_SHORT).show() },
                                 onError = { msg -> Toast.makeText(this@PlayMatchActivity, msg, Toast.LENGTH_SHORT).show() }
+                            )
+                        }
+                        // Swipe izquierda => rechazada
+                        else {
+                            viewModel.deleteMovie(
+                                current,
+                                onError = { msg ->
+                                    Toast.makeText(
+                                        this@PlayMatchActivity,
+                                        msg,
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
                             )
                         }
                     }

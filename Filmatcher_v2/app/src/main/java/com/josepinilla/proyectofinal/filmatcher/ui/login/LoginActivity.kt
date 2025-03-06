@@ -1,6 +1,7 @@
 package com.josepinilla.proyectofinal.filmatcher.ui.login
 
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -34,6 +35,8 @@ class LoginActivity : AppCompatActivity() {
         binding.btnRegister.setOnClickListener {
             startActivity(Intent(this, RegisterActivity::class.java))
         }
+
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_NOSENSOR
     }
 
     private fun checkUserSession() {

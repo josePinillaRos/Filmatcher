@@ -27,6 +27,13 @@ class Repository(
         fbRepository.saveAcceptedMovie(username, movie, providerId)
     }
 
+    /**
+     * deleteMovie
+     * Elimina las películas de un usuario de una plataforma en Firestore
+     */
+    fun deleteMovie(username: String, movie: Result, providerId: Int) {
+        fbRepository.deleteMovie(username, movie, providerId)
+    }
 
     /**
      * fetchMovies
@@ -74,6 +81,10 @@ class Repository(
      */
     suspend fun fetchCommonMatches(userA: String, userB: String): List<Result> {
         return fbRepository.fetchCommonResults(userA, userB)
+    }
+
+    suspend fun resetMoviesByUser(username: String, providerId: Int) {
+        localDataSource.resetMoviesByUser(username, providerId)
     }
 
 }

@@ -160,10 +160,29 @@ class PlayMatchViewModel(
     }
 
     /**
+     * Elimina la película rechazada de Firestore.
+     */
+    fun deleteMovie(movie: Result, onError: (String) -> Unit) {
+        viewModelScope.launch {
+            try {
+                repository.deleteMovie(username, movie, providerId)
+            } catch (e: Exception) {
+                onError("Error al eliminar '${movie.title}'")
+            }
+        }
+    }
+
+    /**
      * Devuelve true si el movimiento en X supera el umbral para considerarse un swipe.
      */
     fun isSwipe(distanceX: Float): Boolean {
         return abs(distanceX) > swipeThreshold
+    }
+
+    fun resetMoviesByUser() {
+        viewModelScope.launch {
+            repository.resetMoviesByUser(username, providerId)
+        }
     }
 }
 

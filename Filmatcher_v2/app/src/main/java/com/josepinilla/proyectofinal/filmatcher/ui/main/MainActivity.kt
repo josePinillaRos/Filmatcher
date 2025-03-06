@@ -1,6 +1,7 @@
 package com.josepinilla.proyectofinal.filmatcher.ui.main
 
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -38,12 +39,15 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setSupportActionBar(binding.toolbar)
+        supportActionBar?.subtitle = getString(R.string.txt_username, currentUsername)
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_NOSENSOR
 
         // Mapeo de proveedores con sus IDs
         val providerMap = mapOf(

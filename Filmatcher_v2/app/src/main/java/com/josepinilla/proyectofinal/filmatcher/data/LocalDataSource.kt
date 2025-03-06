@@ -19,4 +19,8 @@ class LocalDataSource(private val watchedMoviesDao: WatchedMoviesDao) {
     suspend fun getWatchedMoviesById(id: Int, providerId: Int, userName: String): List<Result> {
         return watchedMoviesDao.getWatchedMoviesById(id, providerId, userName)
     }
+
+    suspend fun resetMoviesByUser(username: String, providerId: Int) {
+        watchedMoviesDao.resetMoviesByUser(username, providerId)
+    }
 }

@@ -32,4 +32,7 @@ interface WatchedMoviesDao {
      */
     @Query("SELECT * FROM watched_movies WHERE id = :id AND providerId = :providerId AND userName = :userName")
     suspend fun getWatchedMoviesById(id: Int, providerId: Int, userName: String): List<Result>
+
+    @Query("DELETE FROM watched_movies WHERE userName = :username AND providerId = :providerId")
+    suspend fun resetMoviesByUser(username: String, providerId: Int)
 }

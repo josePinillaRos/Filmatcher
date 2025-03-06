@@ -22,6 +22,7 @@
             app:menu="@menu/menu_main"
             app:popupTheme="@style/CustomPopupMenu"
             app:title="@string/app_name"
+            app:subtitle="@string/txt_username"
             app:titleTextColor="@color/md_theme_inverseOnSurface_highContrast" />
     </com.google.android.material.appbar.AppBarLayout>
 
