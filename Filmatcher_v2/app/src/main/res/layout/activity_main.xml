@@ -63,18 +63,32 @@
                 android:gravity="center"
                 android:orientation="horizontal">
 
-                <EditText
-                    android:id="@+id/etSearchOtherUser"
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:background="@android:drawable/edit_text"
                     android:hint="Usuario a buscar"
-                    android:inputType="textPersonName"
-                    android:padding="8dp"
-                    android:textColor="@color/common_google_signin_btn_text_light_pressed"
-                    android:textColorHint="#303535"
-                    android:textColorLink="?android:attr/textColorPrimaryInverseNoDisable" />
+                    android:paddingRight="8dp"
+                    app:boxBackgroundColor="@color/md_theme_background"
+                    app:boxBackgroundMode="filled"
+                    app:boxCornerRadiusBottomEnd="20dp"
+                    app:boxCornerRadiusBottomStart="20dp"
+                    app:boxCornerRadiusTopEnd="20dp"
+                    app:boxCornerRadiusTopStart="20dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etSearchOtherUser"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@android:color/white"
+                        android:inputType="textPersonName"
+                        android:padding="8dp"
+                        android:paddingRight="8dp"
+                        android:textColor="@android:color/black"
+                        android:textColorHighlight="@android:color/black"
+                        android:textColorHint="@android:color/black"
+                        android:textColorLink="?android:attr/textColorPrimaryInverseNoDisable" />
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <Button
                     android:id="@+id/btnSearchMatches"
@@ -103,66 +117,83 @@
             <GridLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/md_theme_primary_semi2"
                 android:layout_marginBottom="24dp"
+                android:background="@color/md_theme_primary_semi2"
                 android:columnCount="2"
                 android:gravity="center"
-                android:rowCount="3">
+                android:rowCount="3"
+                android:layout_gravity="center">
 
                 <ImageButton
                     android:id="@+id/btn_netflix"
                     android:layout_width="120dp"
                     android:layout_height="120dp"
-                    android:layout_margin="8dp"
+                    android:layout_margin="16dp"
                     android:adjustViewBounds="true"
                     android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/txt_netflix"
                     android:scaleType="fitCenter"
+                    android:layout_gravity="center"
                     android:src="@drawable/netflix" />
 
                 <ImageButton
                     android:id="@+id/btn_disney"
                     android:layout_width="120dp"
                     android:layout_height="120dp"
-                    android:layout_margin="8dp"
+                    android:layout_margin="16dp"
                     android:adjustViewBounds="true"
                     android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/txt_disney"
                     android:scaleType="fitCenter"
+                    android:layout_gravity="center"
                     android:src="@drawable/disney" />
 
                 <ImageButton
                     android:id="@+id/btn_amazon"
                     android:layout_width="120dp"
                     android:layout_height="120dp"
-                    android:layout_margin="8dp"
+                    android:layout_margin="16dp"
                     android:adjustViewBounds="true"
                     android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/txt_amazon"
                     android:scaleType="fitCenter"
+                    android:layout_gravity="center"
                     android:src="@drawable/amazon" />
 
                 <ImageButton
                     android:id="@+id/btn_max"
                     android:layout_width="120dp"
                     android:layout_height="120dp"
-                    android:layout_margin="8dp"
+                    android:layout_margin="16dp"
                     android:adjustViewBounds="true"
                     android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/txt_max"
                     android:scaleType="fitCenter"
+                    android:layout_gravity="center"
                     android:src="@drawable/max" />
 
                 <ImageButton
                     android:id="@+id/btn_movistar"
                     android:layout_width="120dp"
                     android:layout_height="120dp"
-                    android:layout_margin="8dp"
+                    android:layout_margin="16dp"
                     android:adjustViewBounds="true"
                     android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/txt_movistar"
                     android:scaleType="fitCenter"
+                    android:layout_gravity="center"
                     android:src="@drawable/movistar" />
+                <ImageButton
+                    android:id="@+id/btn_appletv"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_margin="16dp"
+                    android:adjustViewBounds="true"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/txt_appletv"
+                    android:scaleType="fitCenter"
+                    android:layout_gravity="center"
+                    android:src="@drawable/appletv" />
             </GridLayout>
 
             <!-- Título para búsqueda de coincidencias -->

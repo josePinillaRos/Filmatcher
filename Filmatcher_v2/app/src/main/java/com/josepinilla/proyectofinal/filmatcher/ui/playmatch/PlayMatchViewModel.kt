@@ -14,7 +14,7 @@ import kotlin.math.abs
  * PlayMatchViewModel
  * Lógica de negocio y de acceso a datos para PlayMatchActivity.
  *
- * @author TuNombre
+ * @author Jose Pinilla
  */
 class PlayMatchViewModel(
     private val repository: Repository,

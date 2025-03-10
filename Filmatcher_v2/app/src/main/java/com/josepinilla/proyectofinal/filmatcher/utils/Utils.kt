@@ -11,7 +11,8 @@ val providerLogos = mapOf(
     2241 to R.drawable.movistar,
     337 to R.drawable.disney,
     1899 to R.drawable.max,
-    119 to R.drawable.amazon
+    119 to R.drawable.amazon,
+    350 to R.drawable.appletv
 )
 
 /**

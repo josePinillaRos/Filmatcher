@@ -55,7 +55,8 @@ class MainActivity : AppCompatActivity() {
             binding.btnMovistar to 2241,
             binding.btnDisney to 337,
             binding.btnMax to 1899,
-            binding.btnAmazon to 119
+            binding.btnAmazon to 119,
+            binding.btnAppletv to 350
         )
 
         // Configurar clics en los botones para ir a PlayMatchActivity en funcion del proveedor
