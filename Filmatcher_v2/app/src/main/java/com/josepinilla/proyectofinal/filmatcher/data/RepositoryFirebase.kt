@@ -12,9 +12,9 @@ class RepositoryFirebase {
      * Guarda una película aceptada en Firestore: user_movies/username/movies/movieId
      */
      fun saveAcceptedMovie(username: String, movie: Result, providerId: Int) {
-        val movieId = movie.id
+        val docId = "${movie.id}_$providerId"
         val docData = hashMapOf(
-            "movieId" to movieId,
+            "movieId" to movie.id,
             "title" to (movie.title ?: "Desconocido"),
             "posterPath" to (movie.posterPath ?: ""),
             "releaseDate" to (movie.releaseDate ?: "Desconocido"), // Año de lanzamiento
@@ -28,7 +28,7 @@ class RepositoryFirebase {
         db.collection("user_movies")
             .document(username)
             .collection("movies")
-            .document(movieId.toString())
+            .document(docId)
             .set(docData)
     }
 
@@ -37,11 +37,11 @@ class RepositoryFirebase {
      * Elimina las películas de un usuario de una plataforma en Firestore
      */
     fun deleteMovie(username: String, movie: Result, providerId: Int) {
-        val movieId = movie.id
+        val docId = "${movie.id}_$providerId"
         db.collection("user_movies")
             .document(username)
             .collection("movies")
-            .document(movieId.toString())
+            .document(docId)
             .delete()
     }
 

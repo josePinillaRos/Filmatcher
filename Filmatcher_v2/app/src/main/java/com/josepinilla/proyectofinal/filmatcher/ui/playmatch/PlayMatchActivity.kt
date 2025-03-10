@@ -15,7 +15,6 @@ import com.bumptech.glide.Glide
 import com.josepinilla.proyectofinal.filmatcher.R
 import com.josepinilla.proyectofinal.filmatcher.data.RemoteDataSource
 import com.josepinilla.proyectofinal.filmatcher.data.Repository
-import com.josepinilla.proyectofinal.filmatcher.data.RepositoryFirebase
 import com.josepinilla.proyectofinal.filmatcher.WatchedMoviesApplication
 import com.josepinilla.proyectofinal.filmatcher.databinding.ActivityPlayMatchBinding
 import com.josepinilla.proyectofinal.filmatcher.models.Result
@@ -24,10 +23,10 @@ import com.josepinilla.proyectofinal.filmatcher.utils.providerLogos
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlin.math.abs
+import kotlin.properties.Delegates
 
 /**
  * PlayMatchActivity
- * Clase que maneja la interfaz de "swipe" de películas y usa el PlayMatchViewModel.
  * Muestra una película a la vez y permite aceptar o rechazar.
  * También permite filtrar por género.
  */
@@ -55,13 +54,15 @@ class PlayMatchActivity : AppCompatActivity() {
         sharedPrefs.getString("username", "guest_user") ?: "guest_user"
     }
 
+    private var providerId: Int = 8
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPlayMatchBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         // Obtenemos el providerId que llega por Intent
-        val providerId = intent.getIntExtra("EXTRA_PROVIDER_ID", 1899)
+        providerId = intent.getIntExtra("EXTRA_PROVIDER_ID", 1899)
 
         // Inicializo el Repository
         val watchedMoviesDB = (application as WatchedMoviesApplication).db
@@ -186,7 +187,7 @@ class PlayMatchActivity : AppCompatActivity() {
             .into(binding.includeItemFilm.ivImage)
 
         // Logotipo del proveedor
-        val providerImage = providerLogos[movie.providerId] ?: R.drawable.netflix
+        val providerImage = providerLogos[providerId] ?: R.drawable.netflix
         Glide.with(this)
             .load(providerImage)
             .into(binding.includeItemFilm.ivProvider)
