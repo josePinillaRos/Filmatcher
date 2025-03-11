@@ -83,9 +83,12 @@ class Repository(
         return fbRepository.fetchCommonResults(userA, userB)
     }
 
+    suspend fun fetchUserMovies(username: String): List<Result> {
+        return fbRepository.fetchUserMovies(username)
+    }
+
     suspend fun resetMoviesByUser(username: String, providerId: Int) {
         localDataSource.resetMoviesByUser(username, providerId)
     }
-
 }
 

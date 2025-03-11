@@ -7,4 +7,9 @@
         android:icon="@android:drawable/ic_menu_close_clear_cancel"
         android:title="Cerrar sesión"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_likes"
+        android:icon="@android:drawable/ic_menu_preferences"
+        android:title="Mis películas"
+        app:showAsAction="never" />
 </menu>

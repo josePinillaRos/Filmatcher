@@ -10,5 +10,6 @@
     <string name="txt_username">Usuario: %s</string>
     <string name="txt_appletv">txt_appletv</string>
     <string name="txt_back_to_main">volver a inicio</string>
-    <string name="txt_matches">Matches</string>">
+    <string name="txt_matches">Matches</string>
+    <string name="txt_liked_films">Mis películas</string>">
 </resources>

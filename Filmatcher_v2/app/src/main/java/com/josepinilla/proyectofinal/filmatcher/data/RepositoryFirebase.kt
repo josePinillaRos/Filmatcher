@@ -73,24 +73,50 @@ class RepositoryFirebase {
 
         // 3) Convertir Firestore docs a Result
         return commonDocs.mapNotNull { doc ->
-            val movieId = doc.getLong("movieId")?.toInt() ?: return@mapNotNull null
-            val title = doc.getString("title") ?: "Desconocido"
-            val posterPath = doc.getString("posterPath") ?: ""
-            val releaseDate = doc.getString("releaseDate") ?: "Desconocido"
-            val overview = doc.getString("overview") ?: "Sin sinopsis disponible"
-            val providerId = doc.getLong("providerId")?.toInt() ?: 0
-            val genreIds = (doc.get("genreIds") as? List<*>)?.mapNotNull { it as? Long }?.map { it.toInt() } ?: emptyList()
-
-            Result(
-                id = movieId,
-                providerId = providerId,
-                title = title,
-                posterPath = posterPath,
-                releaseDate = releaseDate,
-                overview = overview,
-                genreIds = genreIds
-            )
+            mapFirestoreToResult(doc)
         }
+    }
+
+    /**
+     * fetchMoviesByUser
+     * Retorna la lista de películas de un usuario
+     */
+    suspend fun fetchUserMovies(username: String): List<Result> {
+        return try {
+            val querySnapshot = db.collection("user_movies")
+                .document(username)
+                .collection("movies")
+                .get()
+                .await()
+
+            querySnapshot.documents.mapNotNull { doc -> mapFirestoreToResult(doc) }
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
+    /**
+     * mapFirestoreToResult
+     * Convierte un documento Firestore en un objeto Result
+     */
+    private fun mapFirestoreToResult(doc: com.google.firebase.firestore.DocumentSnapshot): Result? {
+        val movieId = doc.getLong("movieId")?.toInt() ?: return null
+        val title = doc.getString("title") ?: "Desconocido"
+        val posterPath = doc.getString("posterPath") ?: ""
+        val releaseDate = doc.getString("releaseDate") ?: "Desconocido"
+        val overview = doc.getString("overview") ?: "Sin sinopsis disponible"
+        val providerId = doc.getLong("providerId")?.toInt() ?: 0
+        val genreIds = (doc.get("genreIds") as? List<*>)?.mapNotNull { it as? Long }?.map { it.toInt() } ?: emptyList()
+
+        return Result(
+            id = movieId,
+            providerId = providerId,
+            title = title,
+            posterPath = posterPath,
+            releaseDate = releaseDate,
+            overview = overview,
+            genreIds = genreIds
+        )
     }
 
 }

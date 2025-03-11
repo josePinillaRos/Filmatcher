@@ -14,6 +14,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.josepinilla.proyectofinal.filmatcher.databinding.ActivityMainBinding
 import com.josepinilla.proyectofinal.filmatcher.R
 import com.josepinilla.proyectofinal.filmatcher.ui.login.LoginActivity
+import com.josepinilla.proyectofinal.filmatcher.ui.matches.LikedFilmsActivity
 import com.josepinilla.proyectofinal.filmatcher.ui.matches.MatchesActivity
 import com.josepinilla.proyectofinal.filmatcher.ui.playmatch.PlayMatchActivity
 
@@ -98,6 +99,11 @@ class MainActivity : AppCompatActivity() {
             R.id.action_logout -> {
                 Log.d("MainActivity", "Menú 'Cerrar sesión' seleccionado")
                 logoutUser()
+                true
+            }
+            R.id.action_likes -> {
+                val intent = Intent(this, LikedFilmsActivity::class.java)
+                startActivity(intent)
                 true
             }
             else -> super.onOptionsItemSelected(item)

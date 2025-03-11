@@ -39,6 +39,10 @@
             android:name=".ui.matches.MatchesActivity"
             android:exported="true"
             />
+        <activity
+            android:name=".ui.matches.LikedFilmsActivity"
+            android:exported="true"
+            />
     </application>
 
 </manifest>
