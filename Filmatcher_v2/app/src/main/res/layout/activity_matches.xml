@@ -7,19 +7,33 @@
     android:orientation="vertical"
     android:fitsSystemWindows="true"
     android:padding="16dp">
-
-    <TextView
-        android:id="@+id/tvTitleMatches"
-        android:layout_width="wrap_content"
+    <!-- AppBar con Toolbar -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:paddingLeft="25dp"
-        android:paddingTop="32dp"
-        android:text="Películas en común"
-        android:textColor="@color/md_theme_background_highContrast"
-        android:textColorLink="#FFFFFF"
-        android:textSize="20sp"
-        android:textStyle="bold" />
+        android:background="@color/md_theme_primary_semi"
+        android:theme="@style/ThemeOverlay.Material3.ActionBar">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="76dp"
+            android:background="@color/md_theme_primary_semi"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:layout_collapseMode="pin"
+            app:menu="@menu/menu_matches"
+            app:popupTheme="@style/CustomPopupMenu"
+            app:title="@string/txt_matches" />
+
+        <ImageButton
+            android:id="@+id/btnBackToMain"
+            android:layout_width="34dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:background="@android:color/transparent"
+            app:tint="#FFFFFF"
+            app:srcCompat="?attr/homeAsUpIndicator" />
+    </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvMatches"

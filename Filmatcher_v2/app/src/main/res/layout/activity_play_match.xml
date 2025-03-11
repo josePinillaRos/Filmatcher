@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -8,110 +9,141 @@
     android:fitsSystemWindows="true"
     tools:context=".ui.playmatch.PlayMatchActivity">
 
-    <!-- SwipeRefreshLayout para actualizar el contenido -->
+    <!-- AppBar con Toolbar -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/md_theme_primary_semi"
+        android:theme="@style/ThemeOverlay.Material3.ActionBar">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="76dp"
+            android:background="@color/md_theme_primary_semi"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:layout_collapseMode="pin"
+            app:menu="@menu/menu_play_match"
+            app:popupTheme="@style/CustomPopupMenu"
+            app:subtitle="@string/txt_username"
+            app:title="@string/app_name" />
+
+        <ImageButton
+            android:id="@+id/btnBackToMain"
+            android:layout_width="34dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:background="@android:color/transparent"
+            android:paddingStart="16dp"
+            app:srcCompat="?attr/homeAsUpIndicator"
+            app:tint="#FFFFFF" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- SwipeRefreshLayout para actualizar contenido -->
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="top"
-        android:clipToPadding="false">
+        android:clipToPadding="false"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <!-- FrameLayout para manejar el padding correctamente -->
+        <!-- FrameLayout para manejar padding -->
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="16dp"
             android:paddingTop="0dp">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="bottom"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-                <!-- Contenedor para el TextView y el Spinner -->
-                <LinearLayout
-                    android:id="@+id/filter_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:paddingTop="16dp"
-                    android:paddingBottom="8dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
-
-                    <TextView
-                        android:id="@+id/tvFilter"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
-                        android:text="Filtrar:"
-                        android:textColor="@android:color/white"
-                        android:textSize="16sp" />
-
-                    <Spinner
-                        android:id="@+id/spinnerFilter"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:background="@android:drawable/btn_dropdown"
-                        android:paddingRight="8dp" />
-                </LinearLayout>
-
-                <!-- Contenedor de la película -->
-                <include
-                    android:id="@+id/include_item_film"
-                    layout="@layout/item_film"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    app:layout_constraintBottom_toTopOf="@id/button_container"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/filter_container" />
-
-                <!-- Contenedor de los botones -->
-                <LinearLayout
-                    android:id="@+id/button_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/md_theme_primary_semi2"
-                    android:gravity="center"
-                    android:orientation="horizontal"
-                    android:paddingTop="2dp"
-                    android:paddingBottom="16dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent">
-
-                    <ImageButton
-                        android:id="@+id/btnReject"
-                        android:layout_width="64dp"
-                        android:layout_height="64dp"
-                        android:layout_marginEnd="24dp"
-                        android:background="@null"
-                        android:contentDescription="@string/txt_reject"
-                        android:src="@android:drawable/ic_delete"
-                        app:tint="@android:color/holo_red_light" />
-
-                    <ImageButton
-                        android:id="@+id/btnAccept"
-                        android:layout_width="64dp"
-                        android:layout_height="64dp"
-                        android:layout_marginStart="24dp"
-                        android:background="@null"
-                        android:contentDescription="@string/txt_accept"
-                        android:src="@android:drawable/btn_star_big_off"
-                        app:tint="@android:color/holo_green_light" />
-                </LinearLayout>
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
         </FrameLayout>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="639dp"
+        android:layout_gravity="bottom"
+        app:layout_anchor="@+id/appBarLayout"
+        app:layout_anchorGravity="bottom|center">
+
+        <!-- Tarjeta para el contenido de la película -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardItem"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:clipToOutline="true"
+            app:cardBackgroundColor="@android:color/transparent"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
+            app:cardForegroundColor="@android:color/transparent"
+            app:cardUseCompatPadding="true"
+            app:layout_constraintBottom_toTopOf="@+id/card_button_container"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:strokeColor="@android:color/transparent"
+            app:strokeWidth="0dp">
+
+            <!-- Contenido de la película -->
+            <include
+                android:id="@+id/include_item_film"
+                layout="@layout/item_film"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Tarjeta para botones (Rechazar/Aceptar) -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_button_container"
+            android:layout_width="0dp"
+            android:layout_height="72dp"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginBottom="24dp"
+            android:paddingTop="5dp"
+            app:cardBackgroundColor="@color/md_theme_primary_semi2"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:cardUseCompatPadding="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/cardItem">
+
+            <LinearLayout
+                android:id="@+id/button_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/md_theme_primary_semi2"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingLeft="8dp"
+                android:paddingTop="8dp"
+                android:paddingRight="8dp"
+                android:paddingBottom="8dp">
+
+                <ImageButton
+                    android:id="@+id/btnReject"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:layout_marginEnd="24dp"
+                    android:background="@null"
+                    android:contentDescription="@string/txt_reject"
+                    android:src="@android:drawable/ic_delete"
+                    app:tint="@android:color/holo_red_light" />
+
+                <ImageButton
+                    android:id="@+id/btnAccept"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:layout_marginStart="24dp"
+                    android:background="@null"
+                    android:contentDescription="@string/txt_accept"
+                    android:src="@android:drawable/btn_star_big_off"
+                    app:tint="@android:color/holo_green_light" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

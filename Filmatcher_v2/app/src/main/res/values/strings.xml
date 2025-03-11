@@ -8,5 +8,7 @@
     <string name="txt_reject">Reject</string>
     <string name="txt_accept">Accept</string>
     <string name="txt_username">Usuario: %s</string>
-    <string name="txt_appletv">txt_appletv</string>">
+    <string name="txt_appletv">txt_appletv</string>
+    <string name="txt_back_to_main">volver a inicio</string>
+    <string name="txt_matches">Matches</string>">
 </resources>

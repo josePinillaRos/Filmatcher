@@ -4,8 +4,11 @@ import android.animation.AnimatorListenerAdapter
 import android.content.Context
 import android.content.pm.ActivityInfo
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
+import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -61,6 +64,10 @@ class PlayMatchActivity : AppCompatActivity() {
         binding = ActivityPlayMatchBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        findViewById<ImageButton>(R.id.btnBackToMain).setOnClickListener {
+            finish() // Cierra esta actividad y vuelve a MainActivity
+        }
+
         // Obtenemos el providerId que llega por Intent
         providerId = intent.getIntExtra("EXTRA_PROVIDER_ID", 1899)
 
@@ -78,7 +85,9 @@ class PlayMatchActivity : AppCompatActivity() {
         setupSwipeRefreshLayout()
 
         // Configurar el Spinner de géneros
-        setupGenreFilterSpinner()
+        //setupGenreFilterSpinner()
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.subtitle = getString(R.string.txt_username, username)
 
         // Configurar los botones de Aceptar/Rechazar
         setupButtons()
@@ -91,6 +100,21 @@ class PlayMatchActivity : AppCompatActivity() {
 
         // Cargar el total de páginas y la primera página
         initData()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_play_match, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_filter -> {
+                showGenreFilterDialog()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     private fun setupSwipeRefreshLayout() {
@@ -233,7 +257,8 @@ class PlayMatchActivity : AppCompatActivity() {
     /**
      * Spinner para filtrar por género.
      */
-    private fun setupGenreFilterSpinner() {
+    private fun showGenreFilterDialog() {
+        // Esto es lo que había en setupGenreFilterSpinner(), para la lista de géneros:
         val genreMap = mapOf(
             0 to "Todos",
             28 to "Acción",
@@ -260,39 +285,26 @@ class PlayMatchActivity : AppCompatActivity() {
         val genreNames = genreMap.values.toList()
         val genreIds = genreMap.keys.toList()
 
-        // Adaptador para el Spinner
-        val adapter = android.widget.ArrayAdapter(
-            this,
-            android.R.layout.simple_spinner_item,
-            genreNames
-        )
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        // Mostramos un diálogo con las opciones (puedes usar setSingleChoiceItems si quieres radio buttons)
+        AlertDialog.Builder(this)
+            .setTitle("Elige un género")
+            .setItems(genreNames.toTypedArray()) { dialog, which ->
+                // Al hacer clic en un género
+                val selectedGenreId = genreIds[which]
+                viewModel.setSelectedGenre(selectedGenreId)
 
-        binding.spinnerFilter.adapter = adapter
-
-        // Listener para el Spinner
-        binding.spinnerFilter.onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: android.widget.AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long
-            ) {
-                val selectedGenre = genreIds[position]
-                // Informamos al ViewModel que cambió el género
-                viewModel.setSelectedGenre(selectedGenre)
-
-                // Volver a cargar la página 1 con el nuevo filtro
+                // Igual que antes: recargar la página 1 con el nuevo género
                 viewModel.fetchPage(
                     pageToLoad = 1,
                     showNextImmediately = false,
                     onError = { message ->
-                        Toast.makeText(this@PlayMatchActivity, message, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
                     }
                 )
+                dialog.dismiss()
             }
-            override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {}
-        }
+            .setNegativeButton("Cancelar", null)
+            .show()
     }
 
     /**
@@ -358,7 +370,7 @@ class PlayMatchActivity : AppCompatActivity() {
      */
     private fun showMovieInfoDialog() {
         val movie = viewModel.currentMovie.value ?: return
-        val overviewText = movie.overview ?: "Sin sinopsis disponible"
+        val overviewText = if (movie.overview.isNullOrBlank()) "Sin sinopsis disponible" else movie.overview
 
         AlertDialog.Builder(this)
             .setTitle(movie.title ?: "Película")

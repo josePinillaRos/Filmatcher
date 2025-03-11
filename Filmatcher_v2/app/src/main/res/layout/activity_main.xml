@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,22 +8,25 @@
     android:background="@drawable/fondomain"
     tools:context=".ui.main.MainActivity">
 
-    <!-- AppBar con Toolbar y menú -->
+    <!-- AppBar con CollapsingToolbar para un efecto vistoso al hacer scroll -->
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/md_theme_primary_semi"
         android:theme="@style/ThemeOverlay.Material3.ActionBar">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
+            android:layout_height="84dp"
+            android:layout_alignParentTop="true"
+            android:background="@color/md_theme_primary_semi"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            android:background="@color/md_theme_primary_semi2"
-            app:menu="@menu/menu_main"
+            app:layout_collapseMode="pin"
             app:popupTheme="@style/CustomPopupMenu"
             app:subtitle="@string/txt_username"
             app:title="@string/app_name" />
+
     </com.google.android.material.appbar.AppBarLayout>
 
     <!-- Contenido principal con ScrollView -->
@@ -36,171 +40,198 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="16dp"
+            android:gravity="center">
 
-            <!-- Título para plataformas -->
-            <TextView
-                android:id="@+id/tvTitleSearch"
+            <!-- Card para la sección de buscar usuario -->
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:background="@color/md_theme_primary_semi2"
-                android:gravity="center"
-                android:text="Buscar películas en común:"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/design_default_color_background"
-                android:textColorLink="@color/md_theme_primary"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:clipToOutline="true"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp"
+                app:cardUseCompatPadding="true">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:background="@color/md_theme_primary_semi2"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="0dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="Usuario a buscar"
-                    android:paddingRight="8dp"
-                    app:boxBackgroundColor="@color/md_theme_background"
-                    app:boxBackgroundMode="filled"
-                    app:boxCornerRadiusBottomEnd="20dp"
-                    app:boxCornerRadiusBottomStart="20dp"
-                    app:boxCornerRadiusTopEnd="20dp"
-                    app:boxCornerRadiusTopStart="20dp">
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etSearchOtherUser"
+                    <!-- Título para "Buscar películas en común" -->
+                    <TextView
+                        android:id="@+id/tvTitleSearch"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:backgroundTint="@android:color/white"
-                        android:inputType="textPersonName"
+                        android:layout_marginBottom="8dp"
+                        android:background="@android:color/transparent"
+                        android:gravity="center"
                         android:padding="8dp"
-                        android:paddingRight="8dp"
-                        android:textColor="@android:color/black"
-                        android:textColorHighlight="@android:color/black"
-                        android:textColorHint="@android:color/black"
-                        android:textColorLink="?android:attr/textColorPrimaryInverseNoDisable" />
-                </com.google.android.material.textfield.TextInputLayout>
+                        android:text="Buscar películas en común:"
+                        android:textColor="@color/md_theme_inverseSurface"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
 
-                <Button
-                    android:id="@+id/btnSearchMatches"
-                    android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="8dp"
+                            android:layout_weight="1"
+                            android:hint="Usuario a buscar"
+                            app:boxBackgroundColor="@color/md_theme_background"
+                            app:boxBackgroundMode="filled"
+                            app:boxCornerRadiusBottomEnd="20dp"
+                            app:boxCornerRadiusBottomStart="20dp"
+                            app:boxCornerRadiusTopEnd="20dp"
+                            app:boxCornerRadiusTopStart="20dp">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etSearchOtherUser"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="textPersonName"
+                                android:padding="8dp"
+                                android:textColor="@color/md_theme_inverseSurface"
+                                android:textColorHint="@android:color/darker_gray" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnSearchMatches"
+                            style="@style/Widget.MaterialComponents.Button.TextButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:padding="10dp"
+                            android:text="🔍" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Card para la sección de plataformas -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToOutline="true"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp"
+                app:cardUseCompatPadding="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="@color/common_google_signin_btn_text_dark_default"
-                    android:padding="10dp"
-                    android:text="🔍" />
-            </LinearLayout>
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
-            <TextView
-                android:id="@+id/tvTitlePlatforms"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:background="@color/md_theme_primary_semi2"
-                android:gravity="center"
-                android:paddingTop="8dp"
-                android:text="Buscar películas por plataforma:"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/design_default_color_background"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                    <TextView
+                        android:id="@+id/tvTitlePlatforms"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:background="#000B0B0B"
+                        android:gravity="center"
+                        android:padding="8dp"
+                        android:text="Buscar películas por plataforma:"
+                        android:textColor="@color/md_theme_inverseSurface"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
 
-            <!-- Sección de botones de plataformas (en grid 2x3) -->
-            <GridLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
-                android:background="@color/md_theme_primary_semi2"
-                android:columnCount="2"
-                android:gravity="center"
-                android:rowCount="3"
-                android:layout_gravity="center">
+                    <!-- Grid con iconos de plataformas -->
+                    <GridLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:alignmentMode="alignMargins"
+                        android:columnCount="2"
+                        android:gravity="center"
+                        android:rowCount="3"
+                        android:useDefaultMargins="true">
 
-                <ImageButton
-                    android:id="@+id/btn_netflix"
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
-                    android:layout_margin="16dp"
-                    android:adjustViewBounds="true"
-                    android:background="?android:attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="@string/txt_netflix"
-                    android:scaleType="fitCenter"
-                    android:layout_gravity="center"
-                    android:src="@drawable/netflix" />
+                        <ImageButton
+                            android:id="@+id/btn_netflix"
+                            android:layout_width="120dp"
+                            android:layout_height="120dp"
+                            android:layout_gravity="center"
+                            android:adjustViewBounds="true"
+                            android:background="?android:attr/selectableItemBackgroundBorderless"
+                            android:contentDescription="@string/txt_netflix"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/netflix" />
 
-                <ImageButton
-                    android:id="@+id/btn_disney"
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
-                    android:layout_margin="16dp"
-                    android:adjustViewBounds="true"
-                    android:background="?android:attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="@string/txt_disney"
-                    android:scaleType="fitCenter"
-                    android:layout_gravity="center"
-                    android:src="@drawable/disney" />
+                        <ImageButton
+                            android:id="@+id/btn_disney"
+                            android:layout_width="120dp"
+                            android:layout_height="120dp"
+                            android:layout_gravity="end"
+                            android:layout_marginEnd="20dp"
+                            android:adjustViewBounds="true"
+                            android:background="?android:attr/selectableItemBackgroundBorderless"
+                            android:contentDescription="@string/txt_disney"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/disney" />
 
-                <ImageButton
-                    android:id="@+id/btn_amazon"
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
-                    android:layout_margin="16dp"
-                    android:adjustViewBounds="true"
-                    android:background="?android:attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="@string/txt_amazon"
-                    android:scaleType="fitCenter"
-                    android:layout_gravity="center"
-                    android:src="@drawable/amazon" />
+                        <ImageButton
+                            android:id="@+id/btn_amazon"
+                            android:layout_width="120dp"
+                            android:layout_height="120dp"
+                            android:layout_gravity="center"
+                            android:adjustViewBounds="true"
+                            android:background="?android:attr/selectableItemBackgroundBorderless"
+                            android:contentDescription="@string/txt_amazon"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/amazon" />
 
-                <ImageButton
-                    android:id="@+id/btn_max"
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
-                    android:layout_margin="16dp"
-                    android:adjustViewBounds="true"
-                    android:background="?android:attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="@string/txt_max"
-                    android:scaleType="fitCenter"
-                    android:layout_gravity="center"
-                    android:src="@drawable/max" />
+                        <ImageButton
+                            android:id="@+id/btn_max"
+                            android:layout_width="120dp"
+                            android:layout_height="120dp"
+                            android:layout_gravity="end"
+                            android:layout_marginEnd="20dp"
+                            android:adjustViewBounds="true"
+                            android:background="?android:attr/selectableItemBackgroundBorderless"
+                            android:contentDescription="@string/txt_max"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/max" />
 
-                <ImageButton
-                    android:id="@+id/btn_movistar"
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
-                    android:layout_margin="16dp"
-                    android:adjustViewBounds="true"
-                    android:background="?android:attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="@string/txt_movistar"
-                    android:scaleType="fitCenter"
-                    android:layout_gravity="center"
-                    android:src="@drawable/movistar" />
-                <ImageButton
-                    android:id="@+id/btn_appletv"
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
-                    android:layout_margin="16dp"
-                    android:adjustViewBounds="true"
-                    android:background="?android:attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="@string/txt_appletv"
-                    android:scaleType="fitCenter"
-                    android:layout_gravity="center"
-                    android:src="@drawable/appletv" />
-            </GridLayout>
+                        <ImageButton
+                            android:id="@+id/btn_movistar"
+                            android:layout_width="120dp"
+                            android:layout_height="120dp"
+                            android:layout_gravity="center"
+                            android:adjustViewBounds="true"
+                            android:background="?android:attr/selectableItemBackgroundBorderless"
+                            android:contentDescription="@string/txt_movistar"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/movistar" />
 
-            <!-- Título para búsqueda de coincidencias -->
+                        <ImageButton
+                            android:id="@+id/btn_appletv"
+                            android:layout_width="120dp"
+                            android:layout_height="120dp"
+                            android:layout_gravity="end"
+                            android:layout_marginEnd="20dp"
+                            android:adjustViewBounds="true"
+                            android:background="?android:attr/selectableItemBackgroundBorderless"
+                            android:contentDescription="@string/txt_appletv"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/appletv" />
+                    </GridLayout>
 
-            <!-- Sección de búsqueda -->
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
     </ScrollView>
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -16,6 +16,20 @@ val providerLogos = mapOf(
 )
 
 /**
+ * providerMap
+ * Mapa que contiene los nombres de los proveedores de streaming segun la API
+ */
+val providerMap = mapOf(
+    0 to "Todos",
+    8 to "Netflix",
+    2241 to "Movistar",
+    337 to "Disney",
+    1899 to "Max",
+    119 to "Prime Video",
+    350 to "Apple TV"
+)
+
+/**
  * getGenres
  * Función que recibe una lista de IDs de géneros y devuelve un String con los nombres de los géneros
  * segun la API
