@@ -1,4 +1,4 @@
-package com.josepinilla.proyectofinal.filmatcher.ui.matches
+package com.josepinilla.proyectofinal.filmatcher.ui.liked
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

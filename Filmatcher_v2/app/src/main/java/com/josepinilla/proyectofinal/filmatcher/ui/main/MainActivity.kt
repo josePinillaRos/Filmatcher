@@ -14,7 +14,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.josepinilla.proyectofinal.filmatcher.databinding.ActivityMainBinding
 import com.josepinilla.proyectofinal.filmatcher.R
 import com.josepinilla.proyectofinal.filmatcher.ui.login.LoginActivity
-import com.josepinilla.proyectofinal.filmatcher.ui.matches.LikedFilmsActivity
+import com.josepinilla.proyectofinal.filmatcher.ui.liked.LikedFilmsActivity
 import com.josepinilla.proyectofinal.filmatcher.ui.matches.MatchesActivity
 import com.josepinilla.proyectofinal.filmatcher.ui.playmatch.PlayMatchActivity
 

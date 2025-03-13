@@ -1,11 +1,14 @@
-package com.josepinilla.proyectofinal.filmatcher.ui.matches
+package com.josepinilla.proyectofinal.filmatcher.ui.liked
 
 import android.content.Context
+import android.content.pm.ActivityInfo
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -16,7 +19,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.snackbar.Snackbar
 import com.josepinilla.proyectofinal.filmatcher.R
 import com.josepinilla.proyectofinal.filmatcher.WatchedMoviesApplication
 import com.josepinilla.proyectofinal.filmatcher.adapters.LikedFilmsAdapter
@@ -24,6 +26,7 @@ import com.josepinilla.proyectofinal.filmatcher.data.RemoteDataSource
 import com.josepinilla.proyectofinal.filmatcher.data.Repository
 import com.josepinilla.proyectofinal.filmatcher.databinding.ActivityLikedFilmsBinding
 import com.josepinilla.proyectofinal.filmatcher.models.Result
+import com.josepinilla.proyectofinal.filmatcher.utils.providerMap
 import kotlinx.coroutines.launch
 
 /**
@@ -45,6 +48,9 @@ class LikedFilmsActivity : AppCompatActivity() {
         sharedPrefs.getString("username", "guest_user") ?: "guest_user"
     }
 
+    // Provider seleccionado (0 = Todos)
+    private var selectedProviderId: Int = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLikedFilmsBinding.inflate(layoutInflater)
@@ -55,6 +61,8 @@ class LikedFilmsActivity : AppCompatActivity() {
         findViewById<ImageButton>(R.id.btnBackToMain).setOnClickListener {
             finish() // Cierra esta actividad y vuelve a MainActivity
         }
+
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_NOSENSOR
 
         // Inicializar repositorio y ViewModel
         val repository = Repository(RemoteDataSource(), (application as WatchedMoviesApplication).db)
@@ -181,10 +189,18 @@ class LikedFilmsActivity : AppCompatActivity() {
     private fun loadLikedMovies() {
         lifecycleScope.launch {
             val movies = viewModel.getUserMovies()
-            if (movies.isEmpty()) {
+
+            // Filtramos según el providerId
+            val filteredMovies = if (selectedProviderId == 0) {
+                movies  // 0 = "Todos"
+            } else {
+                movies.filter { it.providerId == selectedProviderId }
+            }
+
+            if (filteredMovies.isEmpty()) {
                 Toast.makeText(this@LikedFilmsActivity, "No tienes películas guardadas", Toast.LENGTH_SHORT).show()
             }
-            adapter.updateMovies(movies)
+            adapter.updateMovies(filteredMovies)
         }
     }
 
@@ -198,6 +214,44 @@ class LikedFilmsActivity : AppCompatActivity() {
             .setTitle(movie.title ?: "Película")
             .setMessage("Sinopsis: $overviewText")
             .setPositiveButton("Cerrar", null)
+            .show()
+    }
+
+    // Inflamos el menú
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_liked_films, menu)
+        return true
+    }
+
+    // Manejamos el clic en el ítem de filtrado
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_filter -> {
+                showProviderFilterDialog()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    /**
+     * showProviderFilterDialog
+     * Muestra un diálogo para que el usuario elija la plataforma.
+     */
+    private fun showProviderFilterDialog() {
+        val providerNames = providerMap.values.toTypedArray()
+        val providerIds = providerMap.keys.toTypedArray()
+
+        AlertDialog.Builder(this)
+            .setTitle("Filtrar por plataforma")
+            .setItems(providerNames) { dialog, which ->
+                // 'which' es la posición en el array, no el ID real
+                val chosenProviderId = providerIds[which]
+                selectedProviderId = chosenProviderId
+                loadLikedMovies()
+                dialog.dismiss()
+            }
+            .setNegativeButton("Cancelar", null)
             .show()
     }
 }

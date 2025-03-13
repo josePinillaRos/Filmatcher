@@ -76,14 +76,14 @@ class MatchesActivity : AppCompatActivity() {
 
     // 1) Inflamos el menú
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(com.josepinilla.proyectofinal.filmatcher.R.menu.menu_matches, menu)
+        menuInflater.inflate(R.menu.menu_matches, menu)
         return true
     }
 
     // 2) Manejamos el clic en el ítem de filtrado
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            com.josepinilla.proyectofinal.filmatcher.R.id.action_filter -> {
+            R.id.action_filter -> {
                 showProviderFilterDialog()
                 true
             }

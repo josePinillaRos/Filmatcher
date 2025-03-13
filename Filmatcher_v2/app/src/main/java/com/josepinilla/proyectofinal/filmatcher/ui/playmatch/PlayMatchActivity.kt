@@ -1,5 +1,6 @@
 package com.josepinilla.proyectofinal.filmatcher.ui.playmatch
 
+import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.content.Context
 import android.content.pm.ActivityInfo
@@ -7,18 +8,17 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.MotionEvent
-import android.view.View
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.josepinilla.proyectofinal.filmatcher.R
+import com.josepinilla.proyectofinal.filmatcher.WatchedMoviesApplication
 import com.josepinilla.proyectofinal.filmatcher.data.RemoteDataSource
 import com.josepinilla.proyectofinal.filmatcher.data.Repository
-import com.josepinilla.proyectofinal.filmatcher.WatchedMoviesApplication
 import com.josepinilla.proyectofinal.filmatcher.databinding.ActivityPlayMatchBinding
 import com.josepinilla.proyectofinal.filmatcher.models.Result
 import com.josepinilla.proyectofinal.filmatcher.utils.getGenres
@@ -26,7 +26,6 @@ import com.josepinilla.proyectofinal.filmatcher.utils.providerLogos
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlin.math.abs
-import kotlin.properties.Delegates
 
 /**
  * PlayMatchActivity
@@ -39,14 +38,12 @@ class PlayMatchActivity : AppCompatActivity() {
     private lateinit var viewModel: PlayMatchViewModel
 
     // Para manejar el arrastre / swipe
-    private var initialX = 0f
-    private var initialY = 0f
     private var downX = 0f
     private var downY = 0f
 
     // Umbrales
     private val swipeDuration = 200L
-    private val tapThreshold = 10f
+    private val tapThreshold = 20f  // un poco más alto que 10f para evitar falsos taps
 
     // Username de SharedPreferences
     private val sharedPrefs by lazy {
@@ -84,12 +81,11 @@ class PlayMatchActivity : AppCompatActivity() {
         //Configurar el SwipeRefreshLayout
         setupSwipeRefreshLayout()
 
-        // Configurar el Spinner de géneros
-        //setupGenreFilterSpinner()
+        // Configurar la toolbar
         setSupportActionBar(binding.toolbar)
         supportActionBar?.subtitle = getString(R.string.txt_username, username)
 
-        // Configurar los botones de Aceptar/Rechazar
+        // Configurar botones Aceptar/Rechazar
         setupButtons()
 
         // Configurar swipe manual
@@ -230,7 +226,7 @@ class PlayMatchActivity : AppCompatActivity() {
             viewModel.saveWatchedMovie(current)
             viewModel.saveAcceptedMovie(
                 current,
-                onSuccess = { msg -> Toast.makeText(this, msg, Toast.LENGTH_SHORT).show() },
+                onSuccess = { msg -> showShorterToast(msg) },
                 onError = { msg -> Toast.makeText(this, msg, Toast.LENGTH_SHORT).show() }
             )
             viewModel.nextMovie {
@@ -252,6 +248,16 @@ class PlayMatchActivity : AppCompatActivity() {
                 Toast.makeText(this, "No hay más películas disponibles", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    private fun showShorterToast(message: String) {
+        val toast = Toast.makeText(this, message, Toast.LENGTH_SHORT)
+        toast.show()
+
+        // Cancela el toast después de 1 segundo (1000 ms)
+        android.os.Handler().postDelayed({
+            toast.cancel()
+        }, 500)
     }
 
     /**
@@ -285,7 +291,7 @@ class PlayMatchActivity : AppCompatActivity() {
         val genreNames = genreMap.values.toList()
         val genreIds = genreMap.keys.toList()
 
-        // Mostramos un diálogo con las opciones (puedes usar setSingleChoiceItems si quieres radio buttons)
+        // Mostramos un diálogo con las opciones
         AlertDialog.Builder(this)
             .setTitle("Elige un género")
             .setItems(genreNames.toTypedArray()) { dialog, which ->
@@ -293,7 +299,7 @@ class PlayMatchActivity : AppCompatActivity() {
                 val selectedGenreId = genreIds[which]
                 viewModel.setSelectedGenre(selectedGenreId)
 
-                // Igual que antes: recargar la página 1 con el nuevo género
+                // Recargar la página 1 con el nuevo género
                 viewModel.fetchPage(
                     pageToLoad = 1,
                     showNextImmediately = false,
@@ -310,48 +316,54 @@ class PlayMatchActivity : AppCompatActivity() {
     /**
      * Configurar swipe manual en la card.
      */
-    //TODO: Arreglar los warnings
     private fun setupSwipeCard() {
         val card = binding.includeItemFilm.root
         card.setOnTouchListener { v, event ->
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
-                    // Deshabilita el SwipeRefresh para que no interfiera con el swipe horizontal
+                    // Desactiva el SwipeRefresh para no interferir
                     binding.swipeRefresh.isEnabled = false
+                    // Pide al padre que no intercepte el gesto
+                    card.parent.requestDisallowInterceptTouchEvent(true)
 
-                    initialX = card.translationX
-                    initialY = card.translationY
+                    // Guarda las coordenadas donde el usuario pone el dedo
                     downX = event.rawX
                     downY = event.rawY
                 }
                 MotionEvent.ACTION_MOVE -> {
+                    card.parent.requestDisallowInterceptTouchEvent(true)
+
+                    // Desplazamiento relativo al punto donde tocó DOWN
                     val dx = event.rawX - downX
                     val dy = event.rawY - downY
-                    card.translationX = initialX + dx
-                    card.translationY = initialY + dy
+
+                    // La tarjeta se mueve “en directo”
+                    card.translationX = dx
+                    card.translationY = dy
                 }
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                    // Vuelve a habilitar el SwipeRefresh
+                    // Permite al padre interceptar de nuevo
+                    card.parent.requestDisallowInterceptTouchEvent(false)
                     binding.swipeRefresh.isEnabled = true
 
-                    val finalX = card.translationX
-                    val distanceX = abs(finalX)
+                    // Calcula el arrastre final
+                    val dx = card.translationX
+                    val dy = card.translationY
 
-                    val totalDx = abs(event.rawX - downX)
-                    val totalDy = abs(event.rawY - downY)
-
-                    // Detectar tap
-                    if (totalDx < tapThreshold && totalDy < tapThreshold) {
+                    // Detectar “tap” (cuando se mueve muy poco)
+                    if (abs(dx) < tapThreshold && abs(dy) < tapThreshold) {
                         v.performClick()
                         showMovieInfoDialog()
                         return@setOnTouchListener true
                     }
 
-                    // Detectar swipe
-                    if (viewModel.isSwipe(distanceX)) {
-                        val direction = if (finalX > 0) 1 else -1
+                    // Si el arrastre supera cierto umbral => swipe out
+                    val swipeThreshold = card.width * 0.5f
+                    if (abs(dx) > swipeThreshold) {
+                        val direction = if (dx > 0) 1 else -1
                         animateCardOut(direction)
                     } else {
+                        // Vuelve la tarjeta al centro
                         card.animate()
                             .translationX(0f)
                             .translationY(0f)
@@ -363,7 +375,6 @@ class PlayMatchActivity : AppCompatActivity() {
             true
         }
     }
-
 
     /**
      * Muestra diálogo con la sinopsis.
@@ -384,49 +395,52 @@ class PlayMatchActivity : AppCompatActivity() {
      */
     private fun animateCardOut(direction: Int) {
         val card = binding.includeItemFilm.root
-        val exitX = direction * 2000f
+        val exitX = if (direction > 0) 2000f else -2000f
 
+        // Animación de salida
         card.animate()
             .translationX(exitX)
             .setDuration(swipeDuration)
             .setListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: android.animation.Animator) {
+                override fun onAnimationEnd(animation: Animator) {
+                    // 1) Resetea la tarjeta al centro para la próxima película
                     card.translationX = 0f
                     card.translationY = 0f
 
-                    val current = viewModel.currentMovie.value
-                    if (current != null) {
-                        // Marcamos en BD local
-                        current.providerId = intent.getIntExtra("EXTRA_PROVIDER_ID", 1899)
-                        current.userName = username
+                    // 2) Manejamos la lógica de Aceptar/Rechazar
+                    val current = viewModel.currentMovie.value ?: return
+                    current.providerId = providerId
+                    current.userName = username
 
+                    if (direction > 0) {
+                        // Swipe derecha => Aceptar
                         viewModel.saveWatchedMovie(current)
-
-                        // Swipe derecha => aceptada
-                        if (direction == 1) {
-                            viewModel.saveAcceptedMovie(
-                                current,
-                                onSuccess = { msg -> Toast.makeText(this@PlayMatchActivity, msg, Toast.LENGTH_SHORT).show() },
-                                onError = { msg -> Toast.makeText(this@PlayMatchActivity, msg, Toast.LENGTH_SHORT).show() }
-                            )
-                        }
-                        // Swipe izquierda => rechazada
-                        else {
-                            viewModel.deleteMovie(
-                                current,
-                                onError = { msg ->
-                                    Toast.makeText(
-                                        this@PlayMatchActivity,
-                                        msg,
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-                            )
-                        }
+                        viewModel.saveAcceptedMovie(
+                            current,
+                            onSuccess = {msg -> showShorterToast(msg)
+                            },
+                            onError = { msg ->
+                                Toast.makeText(this@PlayMatchActivity, msg, Toast.LENGTH_SHORT).show()
+                            }
+                        )
+                    } else {
+                        // Swipe izquierda => Rechazar
+                        viewModel.saveWatchedMovie(current)
+                        viewModel.deleteMovie(
+                            current,
+                            onError = { msg ->
+                                Toast.makeText(this@PlayMatchActivity, msg, Toast.LENGTH_SHORT).show()
+                            }
+                        )
                     }
 
+                    // 3) Pasamos a la siguiente película
                     viewModel.nextMovie {
-                        Toast.makeText(this@PlayMatchActivity, "No hay más películas disponibles", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@PlayMatchActivity,
+                            "No hay más películas disponibles",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
             })

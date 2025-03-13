@@ -40,7 +40,7 @@
             android:exported="true"
             />
         <activity
-            android:name=".ui.matches.LikedFilmsActivity"
+            android:name=".ui.liked.LikedFilmsActivity"
             android:exported="true"
             />
     </application>

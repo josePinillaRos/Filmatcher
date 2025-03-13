@@ -34,9 +34,6 @@ class PlayMatchViewModel(
     private var totalPages = 1
     private var isLoading = false
 
-    // Umbral para el swipe
-    private val swipeThreshold = 350f
-
     // StateFlow que expone la película actual para la Activity
     private val _currentMovie = MutableStateFlow<Result?>(null)
     val currentMovie: StateFlow<Result?> = _currentMovie
@@ -172,12 +169,6 @@ class PlayMatchViewModel(
         }
     }
 
-    /**
-     * Devuelve true si el movimiento en X supera el umbral para considerarse un swipe.
-     */
-    fun isSwipe(distanceX: Float): Boolean {
-        return abs(distanceX) > swipeThreshold
-    }
 
     fun resetMoviesByUser() {
         viewModelScope.launch {
