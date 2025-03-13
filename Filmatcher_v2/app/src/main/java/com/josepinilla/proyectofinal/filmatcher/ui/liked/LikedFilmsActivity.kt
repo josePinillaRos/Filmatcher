@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.pm.ActivityInfo
 import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.RectF
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
@@ -142,6 +144,30 @@ class LikedFilmsActivity : AppCompatActivity() {
 
                 // Se comprueba que el itemView se está moviendo hacia la derecha
                 if (dX > 0) {
+                    val itemView = viewHolder.itemView
+                    val itemHeight = itemView.bottom - itemView.top
+
+                    // Configurar Paint para el fondo rojo con esquinas redondeadas
+                    val backgroundPaint = Paint().apply {
+                        color = Color.RED
+                        isAntiAlias = true
+                    }
+
+                    // **Ajuste**: Incrementar backgroundMargin para hacer el fondo más delgado
+                    val backgroundMargin = 40f  // margen para la altura
+                    val cornerRadius = 40f  // Mantiene las esquinas redondeadas
+
+                    // Definir los bordes del rectángulo de fondo
+                    val backgroundRect = RectF(
+                        itemView.left.toFloat(),
+                        itemView.top + backgroundMargin,
+                        itemView.left + dX + 20f,  // Pinta según se desliza la X
+                        itemView.bottom - backgroundMargin
+                    )
+
+                    // Dibujar el fondo redondeado con menor altura
+                    c.drawRoundRect(backgroundRect, cornerRadius, cornerRadius, backgroundPaint)
+
                     // Obtener el icono de eliminación
                     val iconTrash: Drawable? = AppCompatResources.getDrawable(
                         recyclerView.context, R.drawable.papelera
@@ -153,32 +179,22 @@ class LikedFilmsActivity : AppCompatActivity() {
                     val iconHeight = (iconTrash.intrinsicHeight * scaleFactor).toInt()
 
                     // Calcular margen izquierdo para centrar el icono verticalmente
-                    val leftMargin = (viewHolder.itemView.height - iconHeight) / 2
+                    val leftMargin = (itemHeight - iconHeight) / 2
 
                     // Posiciones del icono
-                    val iconTop = viewHolder.itemView.top + leftMargin
+                    val iconTop = itemView.top + leftMargin
                     val iconBottom = iconTop + iconHeight
-                    val iconLeft = viewHolder.itemView.left + leftMargin
+                    val iconLeft = itemView.left + leftMargin
                     val iconRight = iconLeft + iconWidth
 
                     // Asignar las medidas al icono con el nuevo tamaño reducido
                     iconTrash.setBounds(iconLeft, iconTop, iconRight, iconBottom)
 
-                    // Crear el fondo rojo y establecer sus límites
-                    val background = ColorDrawable(Color.RED)
-                    val backgroundMargin = 32 // Reduce la altura superior e inferior
-                    background.setBounds(
-                        viewHolder.itemView.left,
-                        viewHolder.itemView.top + backgroundMargin,
-                        viewHolder.itemView.left + dX.toInt() + 20, // Pinta según se desplaza la X
-                        viewHolder.itemView.bottom - backgroundMargin
-                    )
-
-                    // Dibujar fondo y luego icono en el canvas
-                    background.draw(c)
+                    // Dibujar icono en el canvas
                     iconTrash.draw(c)
                 }
             }
+
         }).attachToRecyclerView(binding.rvLikedFilms)
     }
 

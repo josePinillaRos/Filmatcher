@@ -2,14 +2,20 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <!-- Grupo de opciones normales -->
+    <group android:id="@+id/group_main">
+        <item
+            android:id="@+id/action_likes"
+            android:icon="@android:drawable/ic_menu_preferences"
+            android:title="Mis películas"
+            app:showAsAction="never" />
+    </group>
+
+    <!-- Separador automático para opciones secundarias -->
     <item
         android:id="@+id/action_logout"
         android:icon="@android:drawable/ic_menu_close_clear_cancel"
+        android:menuCategory="secondary"
         android:title="Cerrar sesión"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/action_likes"
-        android:icon="@android:drawable/ic_menu_preferences"
-        android:title="Mis películas"
         app:showAsAction="never" />
 </menu>
