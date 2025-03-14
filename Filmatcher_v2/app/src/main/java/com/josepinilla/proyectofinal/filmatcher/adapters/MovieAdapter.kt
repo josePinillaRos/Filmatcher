@@ -41,27 +41,29 @@ class MovieAdapter(
 
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
         val movie = movies[position]
+        val context = holder.itemView.context
+        val imageUrl = context.getString(R.string.base_image_url, movie.posterPath ?: "")
 
         // Asignamos los valores
-        holder.tvTitle.text = movie.title ?: "Sin título"
-        holder.tvGenre.text = "Género(s): ${getGenres(movie.genreIds)}"
-        holder.tvYear.text = "Año: ${movie.releaseDate?.substring(0, 4) ?: "Desconocido"}"
+        holder.tvTitle.text = movie.title ?: R.string.txt_no_title.toString()
+        holder.tvGenre.text = context.getString(R.string.txt_genre, getGenres(movie.genreIds))
+        holder.tvYear.text = context.getString(R.string.txt_year, movie.releaseDate?.substring(0, 4)
+            ?: R.string.txt_year_unknown.toString())
 
         // Cargar la imagen con Glide
         Glide.with(holder.itemView.context)
-            .load("https://image.tmdb.org/t/p/w500${movie.posterPath}")
-            .placeholder(R.drawable.netflix) // Imagen por defecto si no carga
-            .error(R.drawable.netflix) // Imagen en caso de error
+            .load(imageUrl)
+            .placeholder(R.drawable.notfound) // Imagen por defecto si no carga
+            .error(R.drawable.notfound) // Imagen en caso de error
             .into(holder.ivImage)
 
-        Glide.with(holder.itemView.context)
-            .load(R.drawable.netflix)
-            .placeholder(R.drawable.netflix)
-            .into(holder.ivProvider)
 
-        val providerImage = providerLogos[movie.providerId] ?: R.drawable.netflix
+        // Cargar imagen del proveedor (Netflix, Disney, etc.)
+        val providerImage = providerLogos[movie.providerId] ?: R.drawable.notfound
         Glide.with(holder.itemView.context)
             .load(providerImage)
+            .placeholder(R.drawable.notfound)
+            .error(R.drawable.notfound)
             .into(holder.ivProvider)
 
         // Acción al hacer click en un item

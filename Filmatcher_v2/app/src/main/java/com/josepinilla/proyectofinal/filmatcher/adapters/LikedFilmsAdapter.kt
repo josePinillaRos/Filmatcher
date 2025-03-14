@@ -9,14 +9,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.josepinilla.proyectofinal.filmatcher.R
 import com.josepinilla.proyectofinal.filmatcher.models.Result
-import com.josepinilla.proyectofinal.filmatcher.utils.getGenres
 import com.josepinilla.proyectofinal.filmatcher.utils.providerLogos
 
 /**
  * MatchesAdapter
- * Adaptador para mostrar las películas en común entre dos usuarios.
+ * Adaptador para mostrar las películas de un usuario.
  *
- * @param movies Lista de películas en común
+ * @param movies Lista de películas
  * @param onItemClick Callback al hacer clic en una película
  */
 class LikedFilmsAdapter(
@@ -38,23 +37,26 @@ class LikedFilmsAdapter(
 
     override fun onBindViewHolder(holder: LikedFilmsViewHolder, position: Int) {
         val movie = movies[position]
+        val context = holder.itemView.context
+        val imageUrl = context.getString(R.string.base_image_url, movie.posterPath ?: "")
+
 
         // Título
-        holder.tvTitle.text = movie.title ?: "Sin título"
+        holder.tvTitle.text = movie.title ?: R.string.txt_no_title.toString()
 
         // Cargar imagen de la película con Glide
         Glide.with(holder.itemView.context)
-            .load("https://image.tmdb.org/t/p/w500${movie.posterPath}")
-            .placeholder(R.drawable.netflix) // Imagen por defecto si no carga
-            .error(R.drawable.netflix) // Imagen en caso de error
+            .load(imageUrl)
+            .placeholder(R.drawable.notfound) // Imagen por defecto si no carga
+            .error(R.drawable.notfound) // Imagen en caso de error
             .into(holder.ivImage)
 
         // Cargar imagen del proveedor (Netflix, Disney, etc.)
         val providerImage = providerLogos[movie.providerId] ?: R.drawable.netflix
         Glide.with(holder.itemView.context)
             .load(providerImage)
-            .placeholder(R.drawable.netflix)
-            .error(R.drawable.netflix)
+            .placeholder(R.drawable.notfound)
+            .error(R.drawable.notfound)
             .into(holder.ivProvider)
 
         // Acción al hacer click en un item

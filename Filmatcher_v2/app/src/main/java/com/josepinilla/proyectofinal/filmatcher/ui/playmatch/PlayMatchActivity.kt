@@ -221,6 +221,9 @@ class PlayMatchActivity : AppCompatActivity() {
             val current = viewModel.currentMovie.value ?: return@setOnClickListener
             current.providerId = intent.getIntExtra("EXTRA_PROVIDER_ID", 1899)
             current.userName = username
+            if(current.overview == null || current.overview == ""){
+                current.overview = getString(R.string.txt_no_sinopsis)
+            }
 
             // Guarda en BD local y Firestore
             viewModel.saveWatchedMovie(current)
@@ -411,6 +414,9 @@ class PlayMatchActivity : AppCompatActivity() {
                     val current = viewModel.currentMovie.value ?: return
                     current.providerId = providerId
                     current.userName = username
+                    if(current.overview == null || current.overview == ""){
+                        current.overview = getString(R.string.txt_no_sinopsis)
+                    }
 
                     if (direction > 0) {
                         // Swipe derecha => Aceptar

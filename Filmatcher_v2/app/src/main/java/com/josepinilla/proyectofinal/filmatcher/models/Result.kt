@@ -39,7 +39,7 @@ data class Result(
 
     @Ignore
     @SerializedName("overview")
-    val overview: String? = null,
+    var overview: String? = null,
 
     @Ignore
     @SerializedName("popularity")

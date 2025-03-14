@@ -1,6 +1,7 @@
 package com.josepinilla.proyectofinal.filmatcher.data
 
 import com.google.firebase.firestore.FirebaseFirestore
+import com.josepinilla.proyectofinal.filmatcher.R
 import com.josepinilla.proyectofinal.filmatcher.models.Result
 import kotlinx.coroutines.tasks.await
 
@@ -15,11 +16,11 @@ class RepositoryFirebase {
         val docId = "${movie.id}_$providerId"
         val docData = hashMapOf(
             "movieId" to movie.id,
-            "title" to (movie.title ?: "Desconocido"),
+            "title" to (movie.title ?: R.string.txt_no_title.toString()),
             "posterPath" to (movie.posterPath ?: ""),
-            "releaseDate" to (movie.releaseDate ?: "Desconocido"), // Año de lanzamiento
+            "releaseDate" to (movie.releaseDate ?: R.string.txt_year_unknown.toString()), // Año de lanzamiento
             "genreIds" to (movie.genreIds ?: emptyList()), // Lista de géneros
-            "overview" to (movie.overview ?: "Sin sinopsis disponible"), // Sinopsis
+            "overview" to (movie.overview ?: R.string.txt_no_sinopsis.toString()), // Sinopsis
             "providerId" to providerId, // Guardar ID de la plataforma
             "timestamp" to System.currentTimeMillis()
         )
@@ -101,10 +102,10 @@ class RepositoryFirebase {
      */
     private fun mapFirestoreToResult(doc: com.google.firebase.firestore.DocumentSnapshot): Result? {
         val movieId = doc.getLong("movieId")?.toInt() ?: return null
-        val title = doc.getString("title") ?: "Desconocido"
+        val title = doc.getString("title") ?: R.string.txt_no_title.toString()
         val posterPath = doc.getString("posterPath") ?: ""
-        val releaseDate = doc.getString("releaseDate") ?: "Desconocido"
-        val overview = doc.getString("overview") ?: "Sin sinopsis disponible"
+        val releaseDate = doc.getString("releaseDate") ?: R.string.txt_year_unknown.toString()
+        val overview = doc.getString("overview") ?: R.string.txt_no_sinopsis.toString()
         val providerId = doc.getLong("providerId")?.toInt() ?: 0
         val genreIds = (doc.get("genreIds") as? List<*>)?.mapNotNull { it as? Long }?.map { it.toInt() } ?: emptyList()
 
