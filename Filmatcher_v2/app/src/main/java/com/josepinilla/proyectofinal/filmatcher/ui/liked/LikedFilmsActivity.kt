@@ -6,7 +6,6 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
-import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.Menu
@@ -59,7 +58,7 @@ class LikedFilmsActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setSupportActionBar(binding.toolbar)
-        supportActionBar?.subtitle = "Películas guardadas"
+        supportActionBar?.subtitle = getString(R.string.txt_stored_films)
         findViewById<ImageButton>(R.id.btnBackToMain).setOnClickListener {
             finish() // Cierra esta actividad y vuelve a MainActivity
         }
@@ -103,15 +102,17 @@ class LikedFilmsActivity : AppCompatActivity() {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.adapterPosition
                 val movie = adapter.movies[position]
+                val deleteConfirmation = getString(R.string.delete_confirmation, movie.title)
+
 
                 // Restaurar la película temporalmente hasta que el usuario confirme
                 adapter.notifyItemChanged(position)
 
                 // Mostrar diálogo de confirmación
                 AlertDialog.Builder(this@LikedFilmsActivity)
-                    .setTitle("Eliminar película")
-                    .setMessage("¿Estás seguro de que quieres eliminar '${movie.title}'?")
-                    .setPositiveButton("Eliminar") { _, _ ->
+                    .setTitle(R.string.txt_delete_movie)
+                    .setMessage(deleteConfirmation)
+                    .setPositiveButton(R.string.txt_delete) { _, _ ->
                         // Si el usuario confirma, se elimina la película
                         val currentMovies = adapter.movies.toMutableList()
                         currentMovies.removeAt(position)
@@ -120,10 +121,10 @@ class LikedFilmsActivity : AppCompatActivity() {
                         // Eliminar de Firestore
                         lifecycleScope.launch {
                             viewModel.deleteUserMovie(username, movie, movie.providerId)
-                            Toast.makeText(this@LikedFilmsActivity, "Película eliminada", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@LikedFilmsActivity, R.string.txt_film_deleted, Toast.LENGTH_SHORT).show()
                         }
                     }
-                    .setNegativeButton("Cancelar") { dialog, _ ->
+                    .setNegativeButton(R.string.txt_cancel) { dialog, _ ->
                         // Si cancela, se mantiene en la lista
                         dialog.dismiss()
                         adapter.notifyItemChanged(position)
@@ -214,7 +215,7 @@ class LikedFilmsActivity : AppCompatActivity() {
             }
 
             if (filteredMovies.isEmpty()) {
-                Toast.makeText(this@LikedFilmsActivity, "No tienes películas guardadas", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@LikedFilmsActivity, R.string.txt_no_stored_films, Toast.LENGTH_SHORT).show()
             }
             adapter.updateMovies(filteredMovies)
         }
@@ -224,12 +225,12 @@ class LikedFilmsActivity : AppCompatActivity() {
      * Muestra un diálogo con la sinopsis de la película seleccionada.
      */
     private fun showMovieInfoDialog(movie: Result) {
-        val overviewText = if (movie.overview.isNullOrBlank()) "Sin sinopsis disponible" else movie.overview
+        val overviewText = if (movie.overview.isNullOrBlank()) R.string.txt_no_sinopsis else movie.overview
 
         AlertDialog.Builder(this)
-            .setTitle(movie.title ?: "Película")
+            .setTitle(movie.title ?: getString(R.string.txt_title))
             .setMessage("Sinopsis: $overviewText")
-            .setPositiveButton("Cerrar", null)
+            .setPositiveButton(getString(R.string.txt_close), null)
             .show()
     }
 
@@ -259,7 +260,7 @@ class LikedFilmsActivity : AppCompatActivity() {
         val providerIds = providerMap.keys.toTypedArray()
 
         AlertDialog.Builder(this)
-            .setTitle("Filtrar por plataforma")
+            .setTitle(getString(R.string.txt_provider_filter))
             .setItems(providerNames) { dialog, which ->
                 // 'which' es la posición en el array, no el ID real
                 val chosenProviderId = providerIds[which]
@@ -267,7 +268,7 @@ class LikedFilmsActivity : AppCompatActivity() {
                 loadLikedMovies()
                 dialog.dismiss()
             }
-            .setNegativeButton("Cancelar", null)
+            .setNegativeButton(R.string.txt_cancel, null)
             .show()
     }
 }

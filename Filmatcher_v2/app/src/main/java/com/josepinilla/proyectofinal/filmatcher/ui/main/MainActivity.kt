@@ -71,7 +71,7 @@ class MainActivity : AppCompatActivity() {
         binding.btnSearchMatches.setOnClickListener {
             val otherUsername = binding.etSearchOtherUser.text.toString().trim()
             if (otherUsername.isEmpty()) {
-                Toast.makeText(this, "Ingresa un nombre de usuario", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.txt_input_username), Toast.LENGTH_SHORT).show()
             } else {
                 searchMatches()
             }
@@ -97,7 +97,7 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_logout -> {
-                Log.d("MainActivity", "Menú 'Cerrar sesión' seleccionado")
+                Log.d("MainActivity", getString(R.string.txt_logout_selected))
                 logoutUser()
                 true
             }
@@ -133,7 +133,7 @@ class MainActivity : AppCompatActivity() {
     private fun searchMatches() {
         val otherUserNAme = binding.etSearchOtherUser.text.toString().trim()
         if (otherUserNAme.isEmpty()) {
-            Toast.makeText(this, "Ingresa un nombre de usuario", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.txt_input_username), Toast.LENGTH_SHORT).show()
             return
         }
         val intent = Intent(this, MatchesActivity::class.java)

@@ -121,12 +121,12 @@ class PlayMatchActivity : AppCompatActivity() {
 
     private fun showResetDialog() {
         AlertDialog.Builder(this)
-            .setTitle("Reiniciar películas")
-            .setMessage("¿Estás seguro de que quieres reiniciar?")
-            .setPositiveButton("Sí") { _, _ ->
+            .setTitle(getString(R.string.txt_reset_movies))
+            .setMessage(getString(R.string.txt_ask_reset_movies))
+            .setPositiveButton(getString(R.string.txt_yes)) { _, _ ->
                 resetMovies()
             }
-            .setNegativeButton("No") { dialog, _ ->
+            .setNegativeButton(getString(R.string.txt_no)) { dialog, _ ->
                 dialog.dismiss()
                 binding.swipeRefresh.isRefreshing = false
             }
@@ -137,7 +137,7 @@ class PlayMatchActivity : AppCompatActivity() {
         lifecycleScope.launch {
             viewModel.resetMoviesByUser()
             binding.swipeRefresh.isRefreshing = false
-            Toast.makeText(this@PlayMatchActivity, "Películas reiniciadas", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@PlayMatchActivity, getString(R.string.txt_films_reseted), Toast.LENGTH_SHORT).show()
 
             // Cargar la primera página
             viewModel.fetchPage(
@@ -160,7 +160,8 @@ class PlayMatchActivity : AppCompatActivity() {
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
             },
             onSuccess = { total ->
-                Toast.makeText(this, "Total de páginas: $total", Toast.LENGTH_SHORT).show()
+                val totalPages = getString(R.string.txt_pages_size, total)
+                Toast.makeText(this, totalPages, Toast.LENGTH_SHORT).show()
             }
         )
         // Cargar la primera página
@@ -233,7 +234,7 @@ class PlayMatchActivity : AppCompatActivity() {
                 onError = { msg -> Toast.makeText(this, msg, Toast.LENGTH_SHORT).show() }
             )
             viewModel.nextMovie {
-                Toast.makeText(this, "No hay más películas disponibles", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.txt_no_films_available), Toast.LENGTH_SHORT).show()
             }
         }
         binding.btnReject.setOnClickListener {
@@ -248,7 +249,7 @@ class PlayMatchActivity : AppCompatActivity() {
                 onError = { msg -> Toast.makeText(this, msg, Toast.LENGTH_SHORT).show() }
             )
             viewModel.nextMovie {
-                Toast.makeText(this, "No hay más películas disponibles", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.txt_no_films_available), Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -296,7 +297,7 @@ class PlayMatchActivity : AppCompatActivity() {
 
         // Mostramos un diálogo con las opciones
         AlertDialog.Builder(this)
-            .setTitle("Elige un género")
+            .setTitle(getString(R.string.txt_search_film_by_genre))
             .setItems(genreNames.toTypedArray()) { dialog, which ->
                 // Al hacer clic en un género
                 val selectedGenreId = genreIds[which]
@@ -312,7 +313,7 @@ class PlayMatchActivity : AppCompatActivity() {
                 )
                 dialog.dismiss()
             }
-            .setNegativeButton("Cancelar", null)
+            .setNegativeButton(getString(R.string.txt_cancel), null)
             .show()
     }
 
@@ -384,12 +385,12 @@ class PlayMatchActivity : AppCompatActivity() {
      */
     private fun showMovieInfoDialog() {
         val movie = viewModel.currentMovie.value ?: return
-        val overviewText = if (movie.overview.isNullOrBlank()) "Sin sinopsis disponible" else movie.overview
+        val overviewText = if (movie.overview.isNullOrBlank()) getString(R.string.txt_no_sinopsis) else movie.overview
 
         AlertDialog.Builder(this)
-            .setTitle(movie.title ?: "Película")
+            .setTitle(movie.title ?: getString(R.string.txt_title))
             .setMessage("Sinopsis: $overviewText")
-            .setPositiveButton("Cerrar", null)
+            .setPositiveButton(getString(R.string.txt_close), null)
             .show()
     }
 
@@ -444,7 +445,7 @@ class PlayMatchActivity : AppCompatActivity() {
                     viewModel.nextMovie {
                         Toast.makeText(
                             this@PlayMatchActivity,
-                            "No hay más películas disponibles",
+                            getString(R.string.txt_no_films_available),
                             Toast.LENGTH_SHORT
                         ).show()
                     }

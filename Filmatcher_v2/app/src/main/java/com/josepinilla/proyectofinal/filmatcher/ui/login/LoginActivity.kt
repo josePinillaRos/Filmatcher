@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.firestore.FirebaseFirestore
+import com.josepinilla.proyectofinal.filmatcher.R
 import com.josepinilla.proyectofinal.filmatcher.databinding.ActivityLoginBinding
 import com.josepinilla.proyectofinal.filmatcher.ui.register.RegisterActivity
 import com.josepinilla.proyectofinal.filmatcher.ui.main.MainActivity
@@ -55,7 +56,7 @@ class LoginActivity : AppCompatActivity() {
         val password = binding.etPassword.text.toString().trim()
 
         if (username.isEmpty() || password.isEmpty()) {
-            Toast.makeText(this, "Rellena todos los campos", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.txt_empty_fields), Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -68,19 +69,19 @@ class LoginActivity : AppCompatActivity() {
                     val storedPassword = userDoc.getString("password")
 
                     if (storedPassword == hashPassword(password)) {
-                        Toast.makeText(this, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, getString(R.string.txt_login_success), Toast.LENGTH_SHORT).show()
                         saveUserSession(username)
                         startActivity(Intent(this, MainActivity::class.java))
                         finish()
                     } else {
-                        Toast.makeText(this, "Contraseña incorrecta", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, getString(R.string.txt_wrong_password), Toast.LENGTH_SHORT).show()
                     }
                 } else {
-                    Toast.makeText(this, "Usuario no encontrado", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, getString(R.string.txt_user_not_found), Toast.LENGTH_SHORT).show()
                 }
             }
             .addOnFailureListener {
-                Toast.makeText(this, "Error al verificar usuario", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.txt_login_failed), Toast.LENGTH_SHORT).show()
             }
     }
 

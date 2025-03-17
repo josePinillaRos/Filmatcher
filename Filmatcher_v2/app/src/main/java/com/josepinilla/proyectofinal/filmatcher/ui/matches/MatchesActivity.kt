@@ -48,14 +48,14 @@ class MatchesActivity : AppCompatActivity() {
             finish() // Cierra esta actividad y vuelve a MainActivity
         }
 
-        title = "Películas en común"
+        title = getString(R.string.txt_films_matches)
 
         // Recuperar extras
         currentUser = intent.getStringExtra("CURRENT_USER")
         otherUser = intent.getStringExtra("OTHER_USER")
 
         if (currentUser.isNullOrEmpty() || otherUser.isNullOrEmpty()) {
-            Toast.makeText(this, "Faltan datos de usuario", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.txt_error_data_user), Toast.LENGTH_SHORT).show()
             finish()
             return
         }
@@ -100,7 +100,7 @@ class MatchesActivity : AppCompatActivity() {
         val providerIds = providerMap.keys.toTypedArray()
 
         AlertDialog.Builder(this)
-            .setTitle("Filtrar por plataforma")
+            .setTitle(getString(R.string.txt_provider_filter))
             .setItems(providerNames) { dialog, which ->
                 // 'which' es la posición en el array, no el ID real
                 val chosenProviderId = providerIds[which]
@@ -110,7 +110,7 @@ class MatchesActivity : AppCompatActivity() {
                 findMatches(currentUser!!, otherUser!!, selectedProviderId)
                 dialog.dismiss()
             }
-            .setNegativeButton("Cancelar", null)
+            .setNegativeButton(getString(R.string.txt_cancel), null)
             .show()
     }
 
@@ -122,6 +122,7 @@ class MatchesActivity : AppCompatActivity() {
      * @return Lista de películas en común
      */
     private fun findMatches(userA: String, userB: String, providerId: Int) {
+
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 // 1) Obtenemos TODAS las coincidencias
@@ -137,11 +138,12 @@ class MatchesActivity : AppCompatActivity() {
                 // 3) Actualizamos la UI en el hilo principal
                 runOnUiThread {
                     if (filteredResults.isEmpty()) {
-                        Toast.makeText(this@MatchesActivity, "Sin coincidencias", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@MatchesActivity, getString(R.string.txt_no_matches), Toast.LENGTH_SHORT).show()
                     } else {
+                        val matchesSize = getString(R.string.txt_matches_size, filteredResults.size)
                         Toast.makeText(
                             this@MatchesActivity,
-                            "Coincidencias: ${filteredResults.size}",
+                            matchesSize,
                             Toast.LENGTH_SHORT
                         ).show()
                     }
@@ -174,11 +176,11 @@ class MatchesActivity : AppCompatActivity() {
      * @param movie Película a mostrar
      */
     private fun showMovieInfoDialog(movie: Result) {
-        val overviewText = if (movie.overview.isNullOrBlank()) "Sin sinopsis disponible" else movie.overview
+        val overviewText = if (movie.overview.isNullOrBlank()) getString(R.string.txt_no_sinopsis) else movie.overview
         AlertDialog.Builder(this)
-            .setTitle(movie.title ?: "Película")
+            .setTitle(movie.title ?: getString(R.string.txt_title))
             .setMessage(overviewText)
-            .setPositiveButton("Cerrar", null)
+            .setPositiveButton(getString(R.string.txt_close), null)
             .show()
     }
 }

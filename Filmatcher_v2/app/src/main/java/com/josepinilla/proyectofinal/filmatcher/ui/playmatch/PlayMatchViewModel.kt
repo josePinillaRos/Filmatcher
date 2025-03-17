@@ -3,6 +3,7 @@ package com.josepinilla.proyectofinal.filmatcher.ui.playmatch
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.josepinilla.proyectofinal.filmatcher.WatchedMoviesApplication
 import com.josepinilla.proyectofinal.filmatcher.data.Repository
 import com.josepinilla.proyectofinal.filmatcher.models.Result
 import kotlinx.coroutines.flow.MutableStateFlow

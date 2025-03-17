@@ -30,7 +30,7 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Usuario">
+            android:hint="@string/txt_user">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etUsername"
@@ -44,7 +44,7 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Contraseña"
+            android:hint="@string/txt_password"
             android:layout_marginTop="12dp">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -59,7 +59,7 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Confirmar Contraseña"
+            android:hint="@string/txt_confirm_password"
             android:layout_marginTop="12dp">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -75,7 +75,7 @@
             android:id="@+id/btnRegister"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Registrarse"
+            android:text="@string/txt_register"
             android:layout_marginTop="20dp"
             app:cornerRadius="10dp"
             style=""/>
@@ -85,7 +85,7 @@
             android:id="@+id/tvGoToLogin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="¿Ya tienes cuenta? Inicia sesión"
+            android:text="@string/txt_ask_if_register"
             android:textColor="@color/md_theme_primary"
             android:layout_marginTop="16dp"
             android:textSize="14sp"
