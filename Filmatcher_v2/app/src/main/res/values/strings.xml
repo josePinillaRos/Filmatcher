@@ -65,4 +65,8 @@
     <string name="txt_error_register">Error al verificar usuario</string>
     <string name="txt_user_registered">Usuario registrado con éxito</string>
     <string name="txt_user_stored_failure">Error al guardar el usuario</string>
+    <string name="txt_my_films">Mis películas</string>
+    <string name="txt_logout">Cerrar sesión</string>
+    <string name="txt_filter_by_provider">Filtrar por plataforma</string>
+    <string name="txt_filter_by_genre">Filtrar por género</string>
 </resources>

@@ -5,6 +5,6 @@
     <item
         android:id="@+id/action_filter"
         android:icon="@android:drawable/ic_menu_close_clear_cancel"
-        android:title="Filtrar por género"
+        android:title="@string/txt_filter_by_genre"
         app:showAsAction="never" />
 </menu>

@@ -7,7 +7,7 @@
         <item
             android:id="@+id/action_likes"
             android:icon="@android:drawable/ic_menu_preferences"
-            android:title="Mis películas"
+            android:title="@string/txt_my_films"
             app:showAsAction="never" />
     </group>
 
@@ -16,6 +16,6 @@
         android:id="@+id/action_logout"
         android:icon="@android:drawable/ic_menu_close_clear_cancel"
         android:menuCategory="secondary"
-        android:title="Cerrar sesión"
+        android:title="@string/txt_logout"
         app:showAsAction="never" />
 </menu>

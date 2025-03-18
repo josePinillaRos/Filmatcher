@@ -162,7 +162,7 @@ class LikedFilmsActivity : AppCompatActivity() {
                     val backgroundRect = RectF(
                         itemView.left.toFloat(),
                         itemView.top + backgroundMargin,
-                        itemView.left + dX + 20f,  // Pinta según se desliza la X
+                        itemView.left + dX + 40f,  // Pinta según se desliza la X
                         itemView.bottom - backgroundMargin
                     )
 

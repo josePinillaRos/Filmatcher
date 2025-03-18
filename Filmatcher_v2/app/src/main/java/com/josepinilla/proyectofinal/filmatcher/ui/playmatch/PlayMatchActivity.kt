@@ -17,6 +17,7 @@ import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.josepinilla.proyectofinal.filmatcher.R
 import com.josepinilla.proyectofinal.filmatcher.WatchedMoviesApplication
+import com.josepinilla.proyectofinal.filmatcher.adapters.MovieAdapter
 import com.josepinilla.proyectofinal.filmatcher.data.RemoteDataSource
 import com.josepinilla.proyectofinal.filmatcher.data.Repository
 import com.josepinilla.proyectofinal.filmatcher.databinding.ActivityPlayMatchBinding
@@ -196,22 +197,19 @@ class PlayMatchActivity : AppCompatActivity() {
         card.translationX = 0f
         card.translationY = 0f
 
-        binding.includeItemFilm.tvTitle.text = movie.title ?: "Sin título"
-        binding.includeItemFilm.tvYear.text =
-            "Año: ${movie.releaseDate?.take(4) ?: "Desconocido"}"
-        binding.includeItemFilm.tvGenere.text =
-            "Géneros: ${getGenres(movie.genreIds)}"
+        // Asignamos el providerId al objeto movie para que el adapter muestre el logo correcto
+        movie.providerId = providerId
 
-        // Cargar poster con Glide
-        Glide.with(this)
-            .load("https://image.tmdb.org/t/p/w500${movie.posterPath}")
-            .into(binding.includeItemFilm.ivImage)
+        // Usamos el adapter con una sola película
+        val singleMovieAdapter = MovieAdapter(listOf(movie)) {
+            // Acción al hacer clic en la película
+            showMovieInfoDialog()
+        }
 
-        // Logotipo del proveedor
-        val providerImage = providerLogos[providerId] ?: R.drawable.netflix
-        Glide.with(this)
-            .load(providerImage)
-            .into(binding.includeItemFilm.ivProvider)
+        // Creamos el ViewHolder usando la vista incluida (item_film)
+        val viewHolder = MovieAdapter.MovieViewHolder(binding.includeItemFilm.root)
+        // Pasamos la posición 0 (único elemento) para que el adapter "pinche" los datos
+        singleMovieAdapter.onBindViewHolder(viewHolder, 0)
     }
 
     /**
@@ -357,7 +355,7 @@ class PlayMatchActivity : AppCompatActivity() {
                     // Detectar “tap” (cuando se mueve muy poco)
                     if (abs(dx) < tapThreshold && abs(dy) < tapThreshold) {
                         v.performClick()
-                        showMovieInfoDialog()
+                        //showMovieInfoDialog()
                         return@setOnTouchListener true
                     }
 
