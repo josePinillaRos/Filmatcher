@@ -59,3 +59,4 @@ fun getGenres(genreIds: List<Int?>?): String {
 
     return genreIds?.mapNotNull { genreMap[it ?: 0] }?.joinToString(", ") ?: "Desconocido"
 }
+

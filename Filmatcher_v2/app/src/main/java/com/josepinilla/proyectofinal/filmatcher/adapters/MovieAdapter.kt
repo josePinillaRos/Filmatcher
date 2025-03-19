@@ -42,7 +42,8 @@ class MovieAdapter(
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
         val movie = movies[position]
         val context = holder.itemView.context
-        val imageUrl = context.getString(R.string.base_image_url, movie.posterPath ?: "")
+        val imageUrl = "https://image.tmdb.org/t/p/w500${movie.posterPath}"
+
 
         // Asignamos los valores
         holder.tvTitle.text = movie.title ?: R.string.txt_no_title.toString()
@@ -53,7 +54,6 @@ class MovieAdapter(
         // Cargar la imagen con Glide
         Glide.with(holder.itemView.context)
             .load(imageUrl)
-            .placeholder(R.drawable.notfound) // Imagen por defecto si no carga
             .error(R.drawable.notfound) // Imagen en caso de error
             .into(holder.ivImage)
 

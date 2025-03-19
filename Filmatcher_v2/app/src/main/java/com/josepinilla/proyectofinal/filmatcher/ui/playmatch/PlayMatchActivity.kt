@@ -5,16 +5,18 @@ import android.animation.AnimatorListenerAdapter
 import android.content.Context
 import android.content.pm.ActivityInfo
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.MotionEvent
 import android.widget.ImageButton
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import com.bumptech.glide.Glide
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.josepinilla.proyectofinal.filmatcher.R
 import com.josepinilla.proyectofinal.filmatcher.WatchedMoviesApplication
 import com.josepinilla.proyectofinal.filmatcher.adapters.MovieAdapter
@@ -23,10 +25,11 @@ import com.josepinilla.proyectofinal.filmatcher.data.Repository
 import com.josepinilla.proyectofinal.filmatcher.databinding.ActivityPlayMatchBinding
 import com.josepinilla.proyectofinal.filmatcher.models.Result
 import com.josepinilla.proyectofinal.filmatcher.utils.getGenres
-import com.josepinilla.proyectofinal.filmatcher.utils.providerLogos
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlin.math.abs
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 /**
  * PlayMatchActivity
@@ -266,7 +269,6 @@ class PlayMatchActivity : AppCompatActivity() {
      * Spinner para filtrar por género.
      */
     private fun showGenreFilterDialog() {
-        // Esto es lo que había en setupGenreFilterSpinner(), para la lista de géneros:
         val genreMap = mapOf(
             0 to "Todos",
             28 to "Acción",
@@ -294,14 +296,12 @@ class PlayMatchActivity : AppCompatActivity() {
         val genreIds = genreMap.keys.toList()
 
         // Mostramos un diálogo con las opciones
-        AlertDialog.Builder(this)
+        MaterialAlertDialogBuilder(this, R.style.RoundedMaterialDialog)
             .setTitle(getString(R.string.txt_search_film_by_genre))
             .setItems(genreNames.toTypedArray()) { dialog, which ->
-                // Al hacer clic en un género
                 val selectedGenreId = genreIds[which]
                 viewModel.setSelectedGenre(selectedGenreId)
 
-                // Recargar la página 1 con el nuevo género
                 viewModel.fetchPage(
                     pageToLoad = 1,
                     showNextImmediately = false,
@@ -383,13 +383,45 @@ class PlayMatchActivity : AppCompatActivity() {
      */
     private fun showMovieInfoDialog() {
         val movie = viewModel.currentMovie.value ?: return
-        val overviewText = if (movie.overview.isNullOrBlank()) getString(R.string.txt_no_sinopsis) else movie.overview
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog, null)
 
-        AlertDialog.Builder(this)
-            .setTitle(movie.title ?: getString(R.string.txt_title))
-            .setMessage("Sinopsis: $overviewText")
-            .setPositiveButton(getString(R.string.txt_close), null)
-            .show()
+        // Referencias a los elementos del layout
+        val tvMovieTitle = dialogView.findViewById<TextView>(R.id.tv_movie_title)
+        val tvOverviewInfo = dialogView.findViewById<TextView>(R.id.tv_overview_info)
+        val tvReleaseDateInfo = dialogView.findViewById<TextView>(R.id.tv_release_date_info)
+        val tvGenreInfo = dialogView.findViewById<TextView>(R.id.tv_genre_info)
+
+        // Asignación de valores
+        tvMovieTitle.text = movie.title ?: getString(R.string.txt_title)
+        tvOverviewInfo.text = if (movie.overview.isNullOrBlank()) getString(R.string.txt_no_sinopsis) else movie.overview
+
+        // **Corrección de la fecha al formato dd-MM-yyyy**
+        tvReleaseDateInfo.text = formatReleaseDate(movie.releaseDate)
+
+        // **Corrección de los géneros para mostrar nombres en lugar de ID**
+        tvGenreInfo.text = getGenres(movie.genreIds)
+
+        // Construcción del AlertDialog
+       val dialog = MaterialAlertDialogBuilder(this, R.style.RoundedMaterialDialog)
+           .setView(dialogView)
+           .setPositiveButton(getString(R.string.txt_close), null)
+           .create()
+
+       dialog.show()
+    }
+
+    private fun formatReleaseDate(dateString: String?): String {
+        if (dateString.isNullOrBlank()) {
+            return getString(R.string.txt_year_unknown)
+        }
+        return try {
+            val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val outputFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+            val date = inputFormat.parse(dateString)
+            outputFormat.format(date ?: return getString(R.string.txt_year_unknown))
+        } catch (e: Exception) {
+            getString(R.string.txt_year_unknown)
+        }
     }
 
     /**

@@ -69,4 +69,10 @@
     <string name="txt_logout">Cerrar sesión</string>
     <string name="txt_filter_by_provider">Filtrar por plataforma</string>
     <string name="txt_filter_by_genre">Filtrar por género</string>
+    <string name="txt_overview">Sinopsis</string>
+    <string name="txt_year_title">Año de lanzamiento</string>
+    <string name="txt_release_date">01/01/2000</string>
+    <string name="txt_genre_title">Género(s)</string>
+    <string name="txt_genre_description">Acción, Terror…</string>
+    <string name="txt_realese_date_title">Fecha de lanzamiento</string>
 </resources>

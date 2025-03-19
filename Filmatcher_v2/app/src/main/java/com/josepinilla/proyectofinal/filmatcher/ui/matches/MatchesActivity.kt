@@ -1,13 +1,16 @@
 package com.josepinilla.proyectofinal.filmatcher.ui.matches
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageButton
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.josepinilla.proyectofinal.filmatcher.R
 import com.josepinilla.proyectofinal.filmatcher.WatchedMoviesApplication
 import com.josepinilla.proyectofinal.filmatcher.adapters.MovieAdapter
@@ -15,10 +18,13 @@ import com.josepinilla.proyectofinal.filmatcher.data.RemoteDataSource
 import com.josepinilla.proyectofinal.filmatcher.data.Repository
 import com.josepinilla.proyectofinal.filmatcher.databinding.ActivityMatchesBinding
 import com.josepinilla.proyectofinal.filmatcher.models.Result
+import com.josepinilla.proyectofinal.filmatcher.utils.getGenres
 import com.josepinilla.proyectofinal.filmatcher.utils.providerMap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 /**
  * MatchesActivity
@@ -99,7 +105,7 @@ class MatchesActivity : AppCompatActivity() {
         val providerNames = providerMap.values.toTypedArray()
         val providerIds = providerMap.keys.toTypedArray()
 
-        AlertDialog.Builder(this)
+        MaterialAlertDialogBuilder(this)
             .setTitle(getString(R.string.txt_provider_filter))
             .setItems(providerNames) { dialog, which ->
                 // 'which' es la posición en el array, no el ID real
@@ -176,11 +182,40 @@ class MatchesActivity : AppCompatActivity() {
      * @param movie Película a mostrar
      */
     private fun showMovieInfoDialog(movie: Result) {
-        val overviewText = if (movie.overview.isNullOrBlank()) getString(R.string.txt_no_sinopsis) else movie.overview
-        AlertDialog.Builder(this)
-            .setTitle(movie.title ?: getString(R.string.txt_title))
-            .setMessage(overviewText)
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog, null)
+
+        // Referencias a los elementos del layout
+        val tvMovieTitle = dialogView.findViewById<TextView>(R.id.tv_movie_title)
+        val tvOverviewInfo = dialogView.findViewById<TextView>(R.id.tv_overview_info)
+        val tvReleaseDateInfo = dialogView.findViewById<TextView>(R.id.tv_release_date_info)
+        val tvGenreInfo = dialogView.findViewById<TextView>(R.id.tv_genre_info)
+
+        // Asignación de valores
+        tvMovieTitle.text = movie.title ?: getString(R.string.txt_title)
+        tvOverviewInfo.text = if (movie.overview.isNullOrBlank()) getString(R.string.txt_no_sinopsis) else movie.overview
+        tvReleaseDateInfo.text = formatReleaseDate(movie.releaseDate)
+        tvGenreInfo.text = getGenres(movie.genreIds)
+
+        // Construcción del Material AlertDialog con bordes redondeados
+        val dialog = MaterialAlertDialogBuilder(this, R.style.RoundedMaterialDialog)
+            .setView(dialogView)
             .setPositiveButton(getString(R.string.txt_close), null)
-            .show()
+            .create()
+
+        dialog.show()
+    }
+
+    private fun formatReleaseDate(dateString: String?): String {
+        if (dateString.isNullOrBlank()) {
+            return getString(R.string.txt_year_unknown)
+        }
+        return try {
+            val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val outputFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+            val date = inputFormat.parse(dateString)
+            outputFormat.format(date ?: return getString(R.string.txt_year_unknown))
+        } catch (e: Exception) {
+            getString(R.string.txt_year_unknown)
+        }
     }
 }

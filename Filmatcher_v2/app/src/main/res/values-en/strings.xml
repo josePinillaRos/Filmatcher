@@ -70,4 +70,10 @@
     <string name="txt_logout">Log out</string>
     <string name="txt_filter_by_provider">Filter by provider</string>
     <string name="txt_filter_by_genre">Filter by genre</string>
+    <string name="txt_overview">Overview</string>
+    <string name="txt_release_date">01/01/2000</string>
+    <string name="txt_genre_title">Genre(s)</string>
+    <string name="txt_genre_description">Action, Adventure, Comedy…</string>
+    <string name="txt_realese_date_title">Release date</string>
+    <string name="txt_year_title">Release date</string>
 </resources>

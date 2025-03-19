@@ -50,4 +50,9 @@
         <item name="android:popupMenuStyle">@style/CustomPopupMenu</item>
 
     </style>
+    <style name="RoundedMaterialDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="android:background">@drawable/dialog_background</item>
+    </style>
+
+
 </resources>
