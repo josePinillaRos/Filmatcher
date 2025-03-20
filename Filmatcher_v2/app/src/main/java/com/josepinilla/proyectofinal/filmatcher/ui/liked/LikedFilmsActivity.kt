@@ -243,7 +243,7 @@ class LikedFilmsActivity : AppCompatActivity() {
         tvMovieTitle.text = movie.title ?: getString(R.string.txt_title)
         tvOverviewInfo.text = if (movie.overview.isNullOrBlank()) getString(R.string.txt_no_sinopsis) else movie.overview
         tvReleaseDateInfo.text = formatReleaseDate(movie.releaseDate)
-        tvGenreInfo.text = getGenres(movie.genreIds)
+        tvGenreInfo.text = getGenres(this@LikedFilmsActivity,movie.genreIds)
 
         // Construcción del MaterialAlertDialog con bordes redondeados
         val dialog = MaterialAlertDialogBuilder(this, R.style.RoundedMaterialDialog)

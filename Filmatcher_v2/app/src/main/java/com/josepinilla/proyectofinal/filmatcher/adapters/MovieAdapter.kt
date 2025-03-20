@@ -47,7 +47,7 @@ class MovieAdapter(
 
         // Asignamos los valores
         holder.tvTitle.text = movie.title ?: R.string.txt_no_title.toString()
-        holder.tvGenre.text = context.getString(R.string.txt_genre, getGenres(movie.genreIds))
+        holder.tvGenre.text = context.getString(R.string.txt_genre, getGenres(context,movie.genreIds))
         holder.tvYear.text = context.getString(R.string.txt_year, movie.releaseDate?.substring(0, 4)
             ?: R.string.txt_year_unknown.toString())
 

@@ -78,4 +78,24 @@
     <string name="txt_no_internet_title">Sin conexión a internet</string>
     <string name="txt_no_internet_message">No puedes acceder a esta sección sin internet.</string>
     <string name="txt_ok">Aceptar</string>
+    <string name="genre_action">Acción</string>
+    <string name="genre_adventure">Aventura</string>
+    <string name="genre_animation">Animación</string>
+    <string name="genre_comedy">Comedia</string>
+    <string name="genre_crime">Crimen</string>
+    <string name="genre_documentary">Documental</string>
+    <string name="genre_drama">Drama</string>
+    <string name="genre_family">Familia</string>
+    <string name="genre_fantasy">Fantasía</string>
+    <string name="genre_history">Historia</string>
+    <string name="genre_horror">Terror</string>
+    <string name="genre_music">Música</string>
+    <string name="genre_mystery">Misterio</string>
+    <string name="genre_romance">Romance</string>
+    <string name="genre_scifi">Ciencia ficción</string>
+    <string name="genre_tv_movie">Película de TV</string>
+    <string name="genre_thriller">Suspense</string>
+    <string name="genre_war">Bélica</string>
+    <string name="genre_western">Oeste</string>
+    <string name="genre_unknown">Desconocido</string>
 </resources>
