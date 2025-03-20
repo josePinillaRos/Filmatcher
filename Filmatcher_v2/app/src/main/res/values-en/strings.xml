@@ -76,4 +76,7 @@
     <string name="txt_genre_description">Action, Adventure, Comedy…</string>
     <string name="txt_realese_date_title">Release date</string>
     <string name="txt_year_title">Release date</string>
+    <string name="txt_no_internet_title">No internet connection</string>
+    <string name="txt_no_internet_message">No internet connection. Please check your connection and try again.</string>
+    <string name="txt_ok">OK</string>
 </resources>

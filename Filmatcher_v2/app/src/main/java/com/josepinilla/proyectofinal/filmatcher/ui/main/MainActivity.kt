@@ -11,12 +11,14 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.josepinilla.proyectofinal.filmatcher.databinding.ActivityMainBinding
 import com.josepinilla.proyectofinal.filmatcher.R
 import com.josepinilla.proyectofinal.filmatcher.ui.login.LoginActivity
 import com.josepinilla.proyectofinal.filmatcher.ui.liked.LikedFilmsActivity
 import com.josepinilla.proyectofinal.filmatcher.ui.matches.MatchesActivity
 import com.josepinilla.proyectofinal.filmatcher.ui.playmatch.PlayMatchActivity
+import com.josepinilla.proyectofinal.filmatcher.utils.checkConnection
 
 /**
  * MainActivity
@@ -63,7 +65,11 @@ class MainActivity : AppCompatActivity() {
         // Configurar clics en los botones para ir a PlayMatchActivity en funcion del proveedor
         providerMap.forEach { (button, providerId) ->
             button.setOnClickListener {
-                goToPlayMatch(providerId)
+                if (checkConnection(this)) {
+                    goToPlayMatch(providerId)
+                } else {
+                    mostrarDialogoSinConexion()
+                }
             }
         }
 
@@ -73,7 +79,11 @@ class MainActivity : AppCompatActivity() {
             if (otherUsername.isEmpty()) {
                 Toast.makeText(this, getString(R.string.txt_input_username), Toast.LENGTH_SHORT).show()
             } else {
-                searchMatches()
+                if (checkConnection(this)) {
+                    searchMatches()
+                } else {
+                    mostrarDialogoSinConexion()
+                }
             }
         }
     }
@@ -102,8 +112,12 @@ class MainActivity : AppCompatActivity() {
                 true
             }
             R.id.action_likes -> {
-                val intent = Intent(this, LikedFilmsActivity::class.java)
-                startActivity(intent)
+                if (checkConnection(this)) {
+                    val intent = Intent(this, LikedFilmsActivity::class.java)
+                    startActivity(intent)
+                } else {
+                    mostrarDialogoSinConexion()
+                }
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -123,8 +137,6 @@ class MainActivity : AppCompatActivity() {
         finish()
     }
 
-
-
     /**
      * buscarCoincidencias
      * Descarga las películas de currentUsername y de otherUsername,
@@ -140,5 +152,19 @@ class MainActivity : AppCompatActivity() {
         intent.putExtra("CURRENT_USER", currentUsername)
         intent.putExtra("OTHER_USER", otherUserNAme)
         startActivity(intent)
+    }
+
+    /**
+     * mostrarDialogoSinConexion
+     * Muestra un diálogo Material informando que no hay conexión a internet
+     */
+    private fun mostrarDialogoSinConexion() {
+        MaterialAlertDialogBuilder(this)
+            .setTitle(getString(R.string.txt_no_internet_title))
+            .setMessage(getString(R.string.txt_no_internet_message))
+            .setPositiveButton(getString(R.string.txt_ok)) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
     }
 }

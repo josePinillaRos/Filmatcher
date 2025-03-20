@@ -75,4 +75,7 @@
     <string name="txt_genre_title">Género(s)</string>
     <string name="txt_genre_description">Acción, Terror…</string>
     <string name="txt_realese_date_title">Fecha de lanzamiento</string>
+    <string name="txt_no_internet_title">Sin conexión a internet</string>
+    <string name="txt_no_internet_message">No puedes acceder a esta sección sin internet.</string>
+    <string name="txt_ok">Aceptar</string>
 </resources>
