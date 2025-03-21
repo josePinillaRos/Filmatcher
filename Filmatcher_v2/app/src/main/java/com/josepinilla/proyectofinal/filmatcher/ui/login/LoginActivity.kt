@@ -3,13 +3,18 @@ package com.josepinilla.proyectofinal.filmatcher.ui.login
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.google.firebase.firestore.FirebaseFirestore
+import androidx.lifecycle.lifecycleScope
 import com.josepinilla.proyectofinal.filmatcher.R
+import com.josepinilla.proyectofinal.filmatcher.WatchedMoviesApplication
+import com.josepinilla.proyectofinal.filmatcher.data.RemoteDataSource
+import com.josepinilla.proyectofinal.filmatcher.data.Repository
 import com.josepinilla.proyectofinal.filmatcher.databinding.ActivityLoginBinding
 import com.josepinilla.proyectofinal.filmatcher.ui.register.RegisterActivity
 import com.josepinilla.proyectofinal.filmatcher.ui.main.MainActivity
+import kotlinx.coroutines.launch
 import java.security.MessageDigest
 
 /**
@@ -19,12 +24,16 @@ import java.security.MessageDigest
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
-    private val db = FirebaseFirestore.getInstance()
+    private lateinit var repository: Repository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Inicializar el Repository
+        val watchedMoviesDB = (application as WatchedMoviesApplication).db
+        repository = Repository(RemoteDataSource(), watchedMoviesDB)
 
         // Verificar si el usuario ya está autenticado
         checkUserSession()
@@ -55,35 +64,48 @@ class LoginActivity : AppCompatActivity() {
         val username = binding.etUsername.text.toString().trim()
         val password = binding.etPassword.text.toString().trim()
 
-        if (username.isEmpty() || password.isEmpty()) {
-            Toast.makeText(this, getString(R.string.txt_empty_fields), Toast.LENGTH_SHORT).show()
-            return
+        // Limpiar errores previos
+        binding.etUsername.error = null
+        binding.etPassword.error = null
+
+        var hasError = false
+
+        if (username.isEmpty()) {
+            binding.etUsername.error = getString(R.string.txt_required_field)
+            hasError = true
         }
+        if (password.isEmpty()) {
+            binding.etPassword.error = getString(R.string.txt_required_field)
+            hasError = true
+        }
+        if (hasError) return
 
-        db.collection("users")
-            .whereEqualTo("username", username)
-            .get()
-            .addOnSuccessListener { documents ->
-                if (!documents.isEmpty) {
-                    val userDoc = documents.documents[0]
-                    val storedPassword = userDoc.getString("password")
-
-                    if (storedPassword == hashPassword(password)) {
-                        Toast.makeText(this, getString(R.string.txt_login_success), Toast.LENGTH_SHORT).show()
-                        saveUserSession(username)
-                        startActivity(Intent(this, MainActivity::class.java))
-                        finish()
-                    } else {
-                        Toast.makeText(this, getString(R.string.txt_wrong_password), Toast.LENGTH_SHORT).show()
-                    }
-                } else {
-                    Toast.makeText(this, getString(R.string.txt_user_not_found), Toast.LENGTH_SHORT).show()
+        lifecycleScope.launch {
+            try {
+                val querySnapshot = repository.getUserByUsername(username)
+                if (querySnapshot == null || querySnapshot.isEmpty) {
+                    binding.etUsername.error = getString(R.string.txt_user_not_found)
+                    return@launch
                 }
+
+                val userDoc = querySnapshot.documents[0]
+                val storedPassword = userDoc.getString("password")
+
+                if (storedPassword == hashPassword(password)) {
+                    Toast.makeText(this@LoginActivity, getString(R.string.txt_login_success), Toast.LENGTH_SHORT).show()
+                    saveUserSession(username)
+                    startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+                    finish()
+                } else {
+                    binding.etPassword.error = getString(R.string.txt_wrong_password)
+                }
+            } catch (e: Exception) {
+                Toast.makeText(this@LoginActivity, getString(R.string.txt_login_failed), Toast.LENGTH_SHORT).show()
+                Log.d("FIREBASE_ERROR", "Error al obtener usuario: ${e.message}", e)
             }
-            .addOnFailureListener {
-                Toast.makeText(this, getString(R.string.txt_login_failed), Toast.LENGTH_SHORT).show()
-            }
+        }
     }
+
 
     /**
      * hashPassword

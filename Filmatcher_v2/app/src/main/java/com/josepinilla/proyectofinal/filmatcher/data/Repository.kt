@@ -90,5 +90,8 @@ class Repository(
     suspend fun resetMoviesByUser(username: String, providerId: Int) {
         localDataSource.resetMoviesByUser(username, providerId)
     }
+
+    suspend fun getUserByUsername(username: String) =
+        fbRepository.getUserByUsername(username)
 }
 

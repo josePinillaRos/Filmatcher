@@ -1,6 +1,8 @@
 package com.josepinilla.proyectofinal.filmatcher.data
 
+import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.QuerySnapshot
 import com.josepinilla.proyectofinal.filmatcher.R
 import com.josepinilla.proyectofinal.filmatcher.models.Result
 import kotlinx.coroutines.tasks.await
@@ -120,4 +122,21 @@ class RepositoryFirebase {
         )
     }
 
+    /**
+     * getUserByUsername
+     * Obtiene un usuario por su nombre de usuario
+     * Incluye el campo "username" y la password en el documento
+     */
+    suspend fun getUserByUsername(username: String): QuerySnapshot? {
+        return try {
+            FirebaseFirestore.getInstance()
+                .collection("users")
+                .whereEqualTo("username", username)
+                .get()
+                .await()
+        } catch (e: Exception) {
+            Log.e("FIREBASE_ERROR", "Error al obtener usuario: ${e.message}", e)
+            null
+        }
+    }
 }
