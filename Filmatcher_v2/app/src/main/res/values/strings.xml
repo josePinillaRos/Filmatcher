@@ -99,4 +99,6 @@
     <string name="genre_western">Oeste</string>
     <string name="genre_unknown">Desconocido</string>
     <string name="txt_required_field">Campo obligatorio</string>
+    <string name="txt_user_stored_success">Usuario registrado correctamente</string>
+    <string name="txt_alert_title">Error de registro</string>
 </resources>

@@ -6,6 +6,8 @@ import com.josepinilla.proyectofinal.filmatcher.models.MoviesByProviders
  * RemoteDataSource
  * Clase que representa el origen de datos remoto
  * @param api API de películas
+ *
+ * @author Jose Pinilla
  */
 class RemoteDataSource {
     private val api = MoviesAPI.getRetrofit2Api()
@@ -20,7 +22,8 @@ class RemoteDataSource {
     /**
      * Obtiene el número total de páginas de películas de un proveedor de streaming
      */
-    suspend fun getTotalPages(providerId: Int): MoviesByProviders {
-        return api.getTotalPages(watchProvider = providerId)
+    suspend fun getTotalPages(providerID: Int): Int {
+        val response = api.getMoviesByProvider(watchProvider = providerID)
+        return response.totalPages ?: 1
     }
 }

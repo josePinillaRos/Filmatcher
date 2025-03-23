@@ -12,11 +12,13 @@ import com.josepinilla.proyectofinal.filmatcher.models.Result
 import com.josepinilla.proyectofinal.filmatcher.utils.providerLogos
 
 /**
- * MatchesAdapter
+ * LikedFilmsAdapter
  * Adaptador para mostrar las películas de un usuario.
  *
  * @param movies Lista de películas
  * @param onItemClick Callback al hacer clic en una película
+ *
+ * @author Jose Pinilla
  */
 class LikedFilmsAdapter(
     var movies: List<Result>,
@@ -30,18 +32,18 @@ class LikedFilmsAdapter(
         val ivImage: ImageView = itemView.findViewById(R.id.ivImage)
     }
 
+    // Se infla el layout del item
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LikedFilmsViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_liked_films, parent, false)
         return LikedFilmsViewHolder(view)
     }
 
+    // Se enlazan los datos con los elementos de la vista
     override fun onBindViewHolder(holder: LikedFilmsViewHolder, position: Int) {
         val movie = movies[position]
         val context = holder.itemView.context
         val imageUrl = context.getString(R.string.base_image_url, movie.posterPath ?: "")
 
-
-        // Título
         holder.tvTitle.text = movie.title ?: R.string.txt_no_title.toString()
 
         // Cargar imagen de la película con Glide
@@ -65,6 +67,7 @@ class LikedFilmsAdapter(
         }
     }
 
+    // Obtiene el número de elementos de la lista
     override fun getItemCount(): Int = movies.size
 
     // Método para actualizar la lista de películas dinámicamente

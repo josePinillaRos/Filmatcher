@@ -14,11 +14,12 @@ import com.josepinilla.proyectofinal.filmatcher.utils.providerLogos
 
 /**
  * MovieAdapter
- * Clase que representa el adaptador de la lista de películas
+ * Clase que representa el adaptador de las películas
  *
  * @param movies lista de películas
  * @param onItemClick función que se ejecuta al hacer clic en una película
- * @constructor Crea un adaptador de películas
+ *
+ * @author Jose Pinilla
  */
 class MovieAdapter(
     var movies: List<Result>,
@@ -34,11 +35,13 @@ class MovieAdapter(
         val tvYear: TextView = itemView.findViewById(R.id.tvYear)
     }
 
+    // Se infla el layout del item
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_film, parent, false)
         return MovieViewHolder(view)
     }
 
+    // Se enlazan los datos con los elementos de la vista
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
         val movie = movies[position]
         val context = holder.itemView.context
@@ -48,6 +51,8 @@ class MovieAdapter(
         // Asignamos los valores
         holder.tvTitle.text = movie.title ?: R.string.txt_no_title.toString()
         holder.tvGenre.text = context.getString(R.string.txt_genre, getGenres(context,movie.genreIds))
+
+        // De la fecha completa solo mostramos el año con substring
         holder.tvYear.text = context.getString(R.string.txt_year, movie.releaseDate?.substring(0, 4)
             ?: R.string.txt_year_unknown.toString())
 
@@ -72,5 +77,6 @@ class MovieAdapter(
         }
     }
 
+    // Obtiene el número de elementos de la lista
     override fun getItemCount(): Int = movies.size
 }

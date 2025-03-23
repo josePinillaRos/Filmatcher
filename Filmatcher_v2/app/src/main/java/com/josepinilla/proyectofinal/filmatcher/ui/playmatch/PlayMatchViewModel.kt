@@ -3,13 +3,11 @@ package com.josepinilla.proyectofinal.filmatcher.ui.playmatch
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.josepinilla.proyectofinal.filmatcher.WatchedMoviesApplication
 import com.josepinilla.proyectofinal.filmatcher.data.Repository
 import com.josepinilla.proyectofinal.filmatcher.models.Result
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlin.math.abs
 
 /**
  * PlayMatchViewModel
@@ -49,7 +47,7 @@ class PlayMatchViewModel(
     ) {
         viewModelScope.launch {
             try {
-                totalPages = repository.getTotalPages(providerId).totalPages ?: 1
+                totalPages = repository.getTotalPages(providerId)
                 onSuccess(totalPages)
             } catch (e: Exception) {
                 onError("Error al obtener el total de páginas: ${e.message}")

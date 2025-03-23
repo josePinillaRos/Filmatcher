@@ -7,6 +7,14 @@ import com.josepinilla.proyectofinal.filmatcher.R
 import com.josepinilla.proyectofinal.filmatcher.models.Result
 import kotlinx.coroutines.tasks.await
 
+/**
+ * RepositoryFirebase
+ * Clase que se encarga de interactuar con Firestore
+ *
+ * @property db Instancia de Firestore
+ *
+ * @author Jose Pinilla
+ */
 class RepositoryFirebase {
     private val db = FirebaseFirestore.getInstance()
 
@@ -15,15 +23,17 @@ class RepositoryFirebase {
      * Guarda una película aceptada en Firestore: user_movies/username/movies/movieId
      */
      fun saveAcceptedMovie(username: String, movie: Result, providerId: Int) {
+         // la clave del documento es la concatenación de movieId y providerId para así poder guardar
+         // la misma película si es aceptada en diferentes plataformas
         val docId = "${movie.id}_$providerId"
         val docData = hashMapOf(
             "movieId" to movie.id,
             "title" to (movie.title ?: R.string.txt_no_title.toString()),
             "posterPath" to (movie.posterPath ?: ""),
-            "releaseDate" to (movie.releaseDate ?: R.string.txt_year_unknown.toString()), // Año de lanzamiento
-            "genreIds" to (movie.genreIds ?: emptyList()), // Lista de géneros
-            "overview" to (movie.overview ?: R.string.txt_no_sinopsis.toString()), // Sinopsis
-            "providerId" to providerId, // Guardar ID de la plataforma
+            "releaseDate" to (movie.releaseDate ?: R.string.txt_year_unknown.toString()),
+            "genreIds" to (movie.genreIds ?: emptyList()),
+            "overview" to (movie.overview ?: R.string.txt_no_sinopsis.toString()),
+            "providerId" to providerId,
             "timestamp" to System.currentTimeMillis()
         )
 
@@ -36,11 +46,13 @@ class RepositoryFirebase {
     }
 
     /**
-     * deleteMoviesByUser
+     * deleteMovie
      * Elimina las películas de un usuario de una plataforma en Firestore
      */
     fun deleteMovie(username: String, movie: Result, providerId: Int) {
+        // se busca por clave primaria
         val docId = "${movie.id}_$providerId"
+        // Eliminar de Firestore
         db.collection("user_movies")
             .document(username)
             .collection("movies")
@@ -50,7 +62,7 @@ class RepositoryFirebase {
 
     /**
      * fetchCommonMovies
-     * Retorna la lista de IDs en común entre dos usuarios
+     * Retorna la lista de de películas en común entre dos usuarios
      */
     suspend fun fetchCommonResults(userA: String, userB: String): List<Result> {
         // Recoge las películas de userA
@@ -81,7 +93,7 @@ class RepositoryFirebase {
     }
 
     /**
-     * fetchMoviesByUser
+     * fetchUserMovies
      * Retorna la lista de películas de un usuario
      */
     suspend fun fetchUserMovies(username: String): List<Result> {
@@ -109,7 +121,11 @@ class RepositoryFirebase {
         val releaseDate = doc.getString("releaseDate") ?: R.string.txt_year_unknown.toString()
         val overview = doc.getString("overview") ?: R.string.txt_no_sinopsis.toString()
         val providerId = doc.getLong("providerId")?.toInt() ?: 0
-        val genreIds = (doc.get("genreIds") as? List<*>)?.mapNotNull { it as? Long }?.map { it.toInt() } ?: emptyList()
+
+        val genreIds = (doc.get("genreIds") as? List<*>) // Recuperar la lista de géneros sin tipo definido
+            ?.mapNotNull { it as? Long } // Filtrar solo los elementos que sean Long
+            ?.map { it.toInt() } // Convertir cada Long a Int
+            ?: emptyList() // Si el campo no existe, retornar lista vacía
 
         return Result(
             id = movieId,
@@ -137,6 +153,37 @@ class RepositoryFirebase {
         } catch (e: Exception) {
             Log.e("FIREBASE_ERROR", "Error al obtener usuario: ${e.message}", e)
             null
+        }
+    }
+
+    /**
+     * registerUser
+     * Registra un usuario en Firestore
+     */
+    suspend fun registerUser(username: String, hashedPassword: String): Boolean {
+        return try {
+            // Verificar si el usuario ya existe
+            val existingUser = getUserByUsername(username)
+            // Si el usuario ya existe, retornar false
+            if (existingUser != null && !existingUser.isEmpty) {
+                return false // Usuario ya existe
+            }
+
+            // Crear un nuevo usuario (username, password)
+            val user = hashMapOf(
+                "username" to username,
+                "password" to hashedPassword
+            )
+
+            // Guardar en Firestore
+            db.collection("users")
+                .add(user)
+                .await()
+
+            true // Registro exitoso
+        } catch (e: Exception) {
+            Log.e("FIREBASE_ERROR", "Error al registrar usuario: ${e.message}", e)
+            false
         }
     }
 }

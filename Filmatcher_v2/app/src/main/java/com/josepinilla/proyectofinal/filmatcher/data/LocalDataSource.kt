@@ -7,6 +7,7 @@ import com.josepinilla.proyectofinal.filmatcher.models.Result
  * Clase que representa el origen de datos local
  * @param watchedMoviesDao DAO de películas vistas
  *
+ * @author Jose Pinilla
  */
 class LocalDataSource(private val watchedMoviesDao: WatchedMoviesDao) {
 
@@ -20,6 +21,7 @@ class LocalDataSource(private val watchedMoviesDao: WatchedMoviesDao) {
         return watchedMoviesDao.getWatchedMoviesById(id, providerId, userName)
     }
 
+    // Borra las películas vistas por un usuario
     suspend fun resetMoviesByUser(username: String, providerId: Int) {
         watchedMoviesDao.resetMoviesByUser(username, providerId)
     }

@@ -3,31 +3,36 @@ package com.josepinilla.proyectofinal.filmatcher.ui.register
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.google.firebase.firestore.FirebaseFirestore
+import androidx.lifecycle.lifecycleScope
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.josepinilla.proyectofinal.filmatcher.R
+import com.josepinilla.proyectofinal.filmatcher.WatchedMoviesApplication
+import com.josepinilla.proyectofinal.filmatcher.data.RemoteDataSource
+import com.josepinilla.proyectofinal.filmatcher.data.Repository
 import com.josepinilla.proyectofinal.filmatcher.databinding.ActivityRegisterBinding
 import com.josepinilla.proyectofinal.filmatcher.ui.login.LoginActivity
-import java.security.MessageDigest
+import kotlinx.coroutines.launch
 
-/**
- * RegisterActivity
- * Clase que representa la actividad de registro de usuario
- */
 class RegisterActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityRegisterBinding
-    private val db = FirebaseFirestore.getInstance()
+    private lateinit var repository: Repository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val db = (application as WatchedMoviesApplication).db
+        repository = Repository(RemoteDataSource(), db)
+
         binding.btnRegister.setOnClickListener {
             registerUser()
         }
+
         binding.tvGoToLogin.setOnClickListener {
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
@@ -41,65 +46,53 @@ class RegisterActivity : AppCompatActivity() {
         val password = binding.etPassword.text.toString().trim()
         val confirmPassword = binding.etConfirmPassword.text.toString().trim()
 
-        if (username.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
-            Toast.makeText(this, getString(R.string.txt_compulsory_fields), Toast.LENGTH_SHORT).show()
-            return
+        binding.etUsername.error = null
+        binding.etPassword.error = null
+        binding.etConfirmPassword.error = null
+
+        var hasError = false
+
+        if (username.isEmpty()) {
+            binding.etUsername.error = getString(R.string.txt_required_field)
+            hasError = true
+        }
+
+        if (password.isEmpty()) {
+            binding.etPassword.error = getString(R.string.txt_required_field)
+            hasError = true
+        }
+
+        if (confirmPassword.isEmpty()) {
+            binding.etConfirmPassword.error = getString(R.string.txt_required_field)
+            hasError = true
         }
 
         if (password.length < 6) {
-            Toast.makeText(this, getString(R.string.txt_password_length), Toast.LENGTH_SHORT).show()
-            return
+            binding.etPassword.error = getString(R.string.txt_password_length)
+            hasError = true
         }
 
         if (password != confirmPassword) {
-            Toast.makeText(this, getString(R.string.txt_password_match), Toast.LENGTH_SHORT).show()
-            return
+            binding.etConfirmPassword.error = getString(R.string.txt_password_match)
+            hasError = true
         }
 
-        // Verificar si el nombre de usuario ya existe en firestore
-        db.collection("users")
-            .whereEqualTo("username", username)
-            .get()
-            .addOnSuccessListener { documents ->
-                if (!documents.isEmpty) {
-                    Toast.makeText(this, getString(R.string.txt_username_exists), Toast.LENGTH_SHORT).show()
-                } else {
-                    // Guardar el usuario en Firestore con contraseña cifrada
-                    saveUserToFirestore(username, password)
-                }
-            }
-            .addOnFailureListener {
-                Toast.makeText(this, getString(R.string.txt_error_register), Toast.LENGTH_SHORT).show()
-            }
-    }
+        if (hasError) return
 
-    /**
-     * Guarda el usuario en Firestore con la contraseña cifrada
-     */
-    private fun saveUserToFirestore(username: String, password: String) {
-        val hashedPassword = hashPassword(password)
-        val user = hashMapOf(
-            "username" to username,
-            "password" to hashedPassword
-        )
+        lifecycleScope.launch {
+            val success = repository.registerUser(username, password)
 
-        db.collection("users")
-            .add(user)
-            .addOnSuccessListener {
-                Toast.makeText(this, getString(R.string.txt_user_stored_failure), Toast.LENGTH_SHORT).show()
-                startActivity(Intent(this, LoginActivity::class.java))
+            if (success) {
+                Toast.makeText(this@RegisterActivity, getString(R.string.txt_user_stored_success), Toast.LENGTH_SHORT).show()
+                startActivity(Intent(this@RegisterActivity, LoginActivity::class.java))
                 finish()
+            } else {
+                MaterialAlertDialogBuilder(this@RegisterActivity)
+                    .setTitle(getString(R.string.txt_alert_title))
+                    .setMessage(getString(R.string.txt_username_exists))
+                    .setPositiveButton(getString(R.string.txt_ok), null)
+                    .show()
             }
-            .addOnFailureListener {
-                Toast.makeText(this, getString(R.string.txt_error_register), Toast.LENGTH_SHORT).show()
-            }
-    }
-
-    /**
-     * Cifra la contraseña con SHA-256
-     */
-    private fun hashPassword(password: String): String {
-        val bytes = MessageDigest.getInstance("SHA-256").digest(password.toByteArray())
-        return bytes.joinToString("") { "%02x".format(it) }
+        }
     }
 }

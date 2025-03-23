@@ -100,4 +100,6 @@
     <string name="genre_western">Western</string>
     <string name="genre_unknown">Unknown</string>
     <string name="txt_required_field">Required field</string>
+    <string name="txt_user_stored_success">User successfully registered</string>
+    <string name="txt_alert_title">Registration Error</string>
 </resources>
