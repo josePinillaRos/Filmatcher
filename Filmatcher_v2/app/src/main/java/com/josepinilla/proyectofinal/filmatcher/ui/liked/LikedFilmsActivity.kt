@@ -14,7 +14,6 @@ import android.view.MenuItem
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.ViewModelProvider
@@ -39,6 +38,8 @@ import java.util.Locale
 /**
  * LikedFilmsActivity
  * Muestra las películas guardadas por el usuario autenticado.
+ *
+ * @author Jose Pinilla
  */
 class LikedFilmsActivity : AppCompatActivity() {
 
@@ -55,7 +56,7 @@ class LikedFilmsActivity : AppCompatActivity() {
         sharedPrefs.getString("username", "guest_user") ?: "guest_user"
     }
 
-    // Provider seleccionado (0 = Todos)
+    // Provider seleccionado (0 = Todos), se inicializa por defecto
     private var selectedProviderId: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,12 +64,16 @@ class LikedFilmsActivity : AppCompatActivity() {
         binding = ActivityLikedFilmsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Configura la Toolbar
         setSupportActionBar(binding.toolbar)
         supportActionBar?.subtitle = getString(R.string.txt_stored_films)
+
+        // Botón para volver a la actividad principal
         findViewById<ImageButton>(R.id.btnBackToMain).setOnClickListener {
             finish() // Cierra esta actividad y vuelve a MainActivity
         }
 
+        // Bloquear rotación de pantalla
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_NOSENSOR
 
         // Inicializar repositorio y ViewModel
@@ -87,12 +92,20 @@ class LikedFilmsActivity : AppCompatActivity() {
      * Configura el RecyclerView y el adaptador.
      */
     private fun setupRecyclerView() {
+        // Inicializar el adaptador
         adapter = LikedFilmsAdapter(emptyList()) { movie ->
             showMovieInfoDialog(movie)
         }
         binding.rvLikedFilms.layoutManager = LinearLayoutManager(this)
         binding.rvLikedFilms.adapter = adapter
 
+        /**
+         * ItemTouchHelper para deslizar a la derecha y eliminar una película. Mediante un swipe.
+         * Se muestra un diálogo de confirmación antes de eliminar.
+         * Se restaura la película si el usuario cancela.
+         * Se elimina la película si el usuario confirma.
+         * Se actualiza la lista de películas en Firestore.
+         */
         ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
             override fun onMove(
                 recyclerView: RecyclerView,
@@ -105,6 +118,7 @@ class LikedFilmsActivity : AppCompatActivity() {
                 return true
             }
 
+            // Al deslizar a la derecha, se elimina la película
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.adapterPosition
                 val movie = adapter.movies[position]
@@ -138,6 +152,7 @@ class LikedFilmsActivity : AppCompatActivity() {
                     .show()
             }
 
+            // Dibujar el fondo y el icono de eliminación
             override fun onChildDraw(
                 c: Canvas,
                 recyclerView: RecyclerView,
@@ -160,7 +175,7 @@ class LikedFilmsActivity : AppCompatActivity() {
                         isAntiAlias = true
                     }
 
-                    // **Ajuste**: Incrementar backgroundMargin para hacer el fondo más delgado
+                    // backgroundMargin para hacer el fondo más delgado
                     val backgroundMargin = 40f  // margen para la altura
                     val cornerRadius = 40f  // Mantiene las esquinas redondeadas
 
@@ -180,7 +195,7 @@ class LikedFilmsActivity : AppCompatActivity() {
                         recyclerView.context, R.drawable.papelera
                     ) ?: return
 
-                    // Reducir el tamaño del icono (Ej: 70% del tamaño original)
+                    // Reducir el tamaño del icono
                     val scaleFactor = 0.7f
                     val iconWidth = (iconTrash!!.intrinsicWidth * scaleFactor).toInt()
                     val iconHeight = (iconTrash.intrinsicHeight * scaleFactor).toInt()
@@ -233,7 +248,7 @@ class LikedFilmsActivity : AppCompatActivity() {
     private fun showMovieInfoDialog(movie: Result) {
         val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog, null)
 
-        // Referencias a los elementos del layout
+        // elementos del layout
         val tvMovieTitle = dialogView.findViewById<TextView>(R.id.tv_movie_title)
         val tvOverviewInfo = dialogView.findViewById<TextView>(R.id.tv_overview_info)
         val tvReleaseDateInfo = dialogView.findViewById<TextView>(R.id.tv_release_date_info)
@@ -254,6 +269,9 @@ class LikedFilmsActivity : AppCompatActivity() {
         dialog.show()
     }
 
+    /**
+     * Formatea la fecha de lanzamiento de la película.
+     */
     private fun formatReleaseDate(dateString: String?): String {
         if (dateString.isNullOrBlank()) {
             return getString(R.string.txt_year_unknown)
@@ -268,17 +286,23 @@ class LikedFilmsActivity : AppCompatActivity() {
         }
     }
 
-    // Inflamos el menú
+    /**
+     * onCreateOptionsMenu
+     * Infla el menú de opciones.
+     */
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_liked_films, menu)
         return true
     }
 
-    // Manejamos el clic en el ítem de filtrado
+    /**
+     * onOptionsItemSelected
+     * Maneja las acciones de los elementos del menú.
+     */
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_filter -> {
-                showProviderFilterDialog()
+                showProviderFilterDialog() // Muestra el diálogo de filtro por plataforma
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -295,10 +319,10 @@ class LikedFilmsActivity : AppCompatActivity() {
 
         MaterialAlertDialogBuilder(this)
             .setTitle(getString(R.string.txt_provider_filter))
-            .setItems(providerNames) { dialog, which ->
-                // 'which' es la posición en el array, no el ID real
+            .setItems(providerNames) { dialog, which -> // Posición del itmem
                 val chosenProviderId = providerIds[which]
                 selectedProviderId = chosenProviderId
+                // Se vuelven a cargar las películas con el filtro seleccionado
                 loadLikedMovies()
                 dialog.dismiss()
             }

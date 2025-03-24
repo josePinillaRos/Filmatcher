@@ -6,6 +6,13 @@ import androidx.room.Ignore
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
+
+/**
+ * Result
+ * Clase que representa la respuesta de la API de The Movie Database
+ *
+ * @author Jose Pinilla
+ */
 @Parcelize
 @Entity(
     tableName = "watched_movies",

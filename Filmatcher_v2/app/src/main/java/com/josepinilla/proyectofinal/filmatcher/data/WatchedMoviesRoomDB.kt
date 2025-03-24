@@ -11,6 +11,8 @@ import com.josepinilla.proyectofinal.filmatcher.models.Result
 /**
  * WatchedMoviesRoomDB
  * Clase que representa la base de datos de Room
+ *
+ * @author Jose Pinilla
  */
 @Database(entities = [Result::class], version = 1)
 abstract class WatchedMoviesRoomDB: RoomDatabase() {
@@ -33,6 +35,10 @@ interface WatchedMoviesDao {
     @Query("SELECT * FROM watched_movies WHERE id = :id AND providerId = :providerId AND userName = :userName")
     suspend fun getWatchedMoviesById(id: Int, providerId: Int, userName: String): List<Result>
 
+    /**
+     * resetMovies
+     * Elimina las películas vistas por un usuario
+     */
     @Query("DELETE FROM watched_movies WHERE userName = :username AND providerId = :providerId")
     suspend fun resetMoviesByUser(username: String, providerId: Int)
 }
