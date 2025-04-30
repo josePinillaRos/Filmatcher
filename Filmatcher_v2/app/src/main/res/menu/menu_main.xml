@@ -11,11 +11,25 @@
             app:showAsAction="never" />
     </group>
 
-    <!-- Separador automático para opciones secundarias -->
     <item
-        android:id="@+id/action_logout"
-        android:icon="@android:drawable/ic_menu_close_clear_cancel"
-        android:menuCategory="secondary"
-        android:title="@string/txt_logout"
+        android:id="@+id/menu_divider"
+        android:title=" "
+        android:enabled="false"
         app:showAsAction="never" />
+    <!-- Separador automático para opciones secundarias -->
+    <group >
+        <item
+            android:id="@+id/action_logout"
+            android:icon="@android:drawable/ic_menu_close_clear_cancel"
+            android:menuCategory="secondary"
+            android:title="@string/txt_logout"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/action_about"
+            android:icon="@android:drawable/ic_menu_help"
+            android:menuCategory="secondary"
+            android:title="@string/txt_about"
+            app:showAsAction="never" />
+    </group>
+
 </menu>

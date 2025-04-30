@@ -101,4 +101,8 @@
     <string name="txt_required_field">Campo obligatorio</string>
     <string name="txt_user_stored_success">Usuario registrado correctamente</string>
     <string name="txt_alert_title">Error de registro</string>
+    <string name="tmdb_logo">Logo de TMDb</string>
+    <string name="tmdb_attrib">Este producto usa TMDB API pero no está firmado o certificado por TMDB.</string>
+    <string name="txt_about">Acerca de</string>
+    <string name="txt_about_message">Filmatcher es un producto creado por Jose Antonio Pinilla, estudiante de Desarrollo de aplicaciones multiplataforma. Utiliza la API de TMDB pero no esta soportado ni firmado por TMDB.</string>
 </resources>

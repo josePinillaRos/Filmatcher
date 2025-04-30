@@ -120,6 +120,16 @@ class MainActivity : AppCompatActivity() {
                 }
                 true
             }
+            R.id.action_about -> {
+                MaterialAlertDialogBuilder(this)
+                    .setTitle(getString(R.string.txt_about))
+                    .setMessage(getString(R.string.txt_about_message))
+                    .setPositiveButton(getString(R.string.txt_ok)) { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                    .show()
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }

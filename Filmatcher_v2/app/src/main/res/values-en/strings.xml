@@ -102,4 +102,8 @@
     <string name="txt_required_field">Required field</string>
     <string name="txt_user_stored_success">User successfully registered</string>
     <string name="txt_alert_title">Registration Error</string>
+    <string name="tmdb_logo">TMDB icon</string>
+    <string name="tmdb_attrib">This product uses the TMDB API but is not endorsed or certified by TMDB.</string>
+    <string name="txt_about">About</string>
+    <string name="txt_about_message">Filmatcher is a project developed by Jose Antonio Pinilla, student of Development of multiplatform applications . Uses de TMDB API but it is not endorsed or certified by TMDB.</string>
 </resources>
