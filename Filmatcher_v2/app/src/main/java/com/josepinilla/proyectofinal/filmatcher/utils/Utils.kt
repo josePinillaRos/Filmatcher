@@ -70,7 +70,6 @@ fun getGenres(context: Context, genreIds: List<Int?>?): String {
         }
         ?.joinToString(", ")
         ?: context.getString(R.string.txt_cancel)
-    //return genreIds?.mapNotNull { genreMap[it ?: 0] }?.joinToString(", ") ?: "Desconocido"
 }
 
 

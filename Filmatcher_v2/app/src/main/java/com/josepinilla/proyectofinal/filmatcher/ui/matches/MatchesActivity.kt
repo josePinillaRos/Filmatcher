@@ -7,7 +7,6 @@ import android.view.MenuItem
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -80,7 +79,10 @@ class MatchesActivity : AppCompatActivity() {
         findMatches(currentUser!!, otherUser!!, selectedProviderId)
     }
 
-    // 1) Inflamos el menú
+    /**
+     * onCreateOptionsMenu
+     * infla el menú de opciones
+     */
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_matches, menu)
         return true
@@ -131,17 +133,17 @@ class MatchesActivity : AppCompatActivity() {
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                // 1) Obtenemos TODAS las coincidencias
+                // Obtener todas las coincidencias
                 val commonResults = repository.fetchCommonMatches(userA, userB)
 
-                // 2) Filtramos según el providerId
+                // Filtrar según el providerId
                 val filteredResults = if (providerId == 0) {
-                    commonResults  // 0 = "Todos"
+                    commonResults  // 0 = Todos
                 } else {
                     commonResults.filter { it.providerId == providerId }
                 }
 
-                // 3) Actualizamos la UI en el hilo principal
+                // Actualizo la UI
                 runOnUiThread {
                     if (filteredResults.isEmpty()) {
                         Toast.makeText(this@MatchesActivity, getString(R.string.txt_no_matches), Toast.LENGTH_SHORT).show()
@@ -205,6 +207,10 @@ class MatchesActivity : AppCompatActivity() {
         dialog.show()
     }
 
+    /**
+     * formatReleaseDate
+     * Método que formatea la fecha de lanzamiento para que se muestre en el formato dd-MM-yyyy
+     */
     private fun formatReleaseDate(dateString: String?): String {
         if (dateString.isNullOrBlank()) {
             return getString(R.string.txt_year_unknown)
